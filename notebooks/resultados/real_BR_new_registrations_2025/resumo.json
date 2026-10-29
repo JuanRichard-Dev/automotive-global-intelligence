@@ -1,0 +1,166 @@
+{
+  "gerado_em_utc": "2026-10-29T16:51:00.783208+00:00",
+  "pais": "BR",
+  "ano": 2025,
+  "origem": "real",
+  "medida": "new_registrations",
+  "periodicidade": "anual",
+  "unidades_observadas": 1872220,
+  "mercado_elegivel": 1996531,
+  "cobertura_pct": 93.77365039661292,
+  "modelos": 50,
+  "lider": {
+    "marca": "VOLKSWAGEN",
+    "modelo": "POLO",
+    "unidades": 122672
+  },
+  "descritiva_unidades_modelo": {
+    "count": 50.0,
+    "mean": 37444.4,
+    "std": 28482.21315638436,
+    "min": 4919.0,
+    "25%": 14056.5,
+    "50%": 32211.5,
+    "75%": 58115.25,
+    "max": 122672.0
+  },
+  "correlacao_pearson_preco_unidades": null,
+  "pares_correlacao": 0,
+  "previsao_exploratoria": {
+    "disponivel": false
+  },
+  "execucao_etl": {
+    "id": "342c07b3-d980-464d-bdb6-d0b137919a1b",
+    "seed": 0,
+    "linhas_sinteticas": 0,
+    "terminada_em": "2026-10-29 13:49:01.627014-03:00"
+  },
+  "fontes": [
+    {
+      "id": "FEN_2025_05",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 05/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_05_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_02",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 02/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_02_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2022_12",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 12/2022",
+      "url": "https://www.fenabrave.org.br/portal/files/2022_12_2.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_08",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 08/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_08_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_04",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 04/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_04_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_12",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 12/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_12_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2024_12",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 12/2024",
+      "url": "https://www.fenabrave.org.br/portal/files/2024_12_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2021_12",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 12/2021",
+      "url": "https://www.fenabrave.org.br/portal/files/2021_12_2.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2023_12",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 12/2023",
+      "url": "https://www.fenabrave.org.br/portal/files/2023_12_2.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_03",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 03/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_03_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_01",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 01/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_01_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_07",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 07/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_07_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_06",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 06/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_06_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    },
+    {
+      "id": "FEN_2025_09",
+      "organizacao": "Fenabrave",
+      "titulo": "Emplacamentos 09/2025",
+      "url": "https://www.fenabrave.org.br/portal/files/2025_09_02.pdf",
+      "licenca": "Direitos da publicação Fenabrave preservados; licença aberta não identificada. Extrato factual para pesquisa pessoal.",
+      "cobertura": "Top 50 de automóveis novos nacionais; total elegível da mesma edição",
+      "limitacoes": "Sem versão, combustível, preço, categoria de carroceria ou geografia estadual. Snapshots e revisões por edição. Série mensal histórica parcial."
+    }
+  ]
+}

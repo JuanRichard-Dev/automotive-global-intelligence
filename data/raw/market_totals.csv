@@ -1,0 +1,71 @@
+country_iso,state_code,year,month,period_kind,metric,source_id,fuel,units,scope
+BR,,2021,12,monthly,new_registrations,FEN_2021_12,,156146,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2021,,annual,new_registrations,FEN_2021_12,,1557957,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2022,12,monthly,new_registrations,FEN_2022_12,,164169,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2022,,annual,new_registrations,FEN_2022_12,,1576960,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2023,12,monthly,new_registrations,FEN_2023_12,,187751,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2023,,annual,new_registrations,FEN_2023_12,,1720834,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2024,12,monthly,new_registrations,FEN_2024_12,,189862,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2024,,annual,new_registrations,FEN_2024_12,,1948136,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,12,monthly,new_registrations,FEN_2025_12,,210732,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,,annual,new_registrations,FEN_2025_12,,1996531,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,1,monthly,new_registrations,FEN_2025_01,,123359,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,2,monthly,new_registrations,FEN_2025_02,,134772,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,3,monthly,new_registrations,FEN_2025_03,,141542,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,4,monthly,new_registrations,FEN_2025_04,,152267,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,5,monthly,new_registrations,FEN_2025_05,,167540,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,6,monthly,new_registrations,FEN_2025_06,,159128,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,7,monthly,new_registrations,FEN_2025_07,,181787,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,8,monthly,new_registrations,FEN_2025_08,,172280,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2025,9,monthly,new_registrations,FEN_2025_09,,178548,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,1,monthly,new_registrations,FEN_2026_01,,125136,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,2,monthly,new_registrations,FEN_2026_02,,140548,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,3,monthly,new_registrations,FEN_2026_03,,206375,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,4,monthly,new_registrations,FEN_2026_04,,187313,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,5,monthly,new_registrations,FEN_2026_05,,214300,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,6,monthly,new_registrations,FEN_2026_06,,212902,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,7,monthly,new_registrations,FEN_2026_07,,212691,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,8,monthly,new_registrations,FEN_2026_08,,212876,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+BR,,2026,9,monthly,new_registrations,FEN_2026_09,,216366,Total de automóveis novos do mesmo informe Fenabrave; comerciais leves excluídos
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,,1677245,Passenger cars; all generic models and all fuels; includes used imports
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,diesel,194692,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,eletrico,190420,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gas,2400,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gasolina,911684,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hibrido,378034,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hidrogenio,12,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2021,,annual,first_registrations_including_imports,UK_DFT_VEH0160,outros,3,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,,1652128,Passenger cars; all generic models and all fuels; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,diesel,127902,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,eletrico,266875,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gas,3781,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gasolina,821258,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hibrido,432301,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hidrogenio,8,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2022,,annual,first_registrations_including_imports,UK_DFT_VEH0160,outros,3,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,,1945832,Passenger cars; all generic models and all fuels; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,diesel,126170,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,eletrico,314222,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gas,2755,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gasolina,898808,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hibrido,603848,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hidrogenio,26,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2023,,annual,first_registrations_including_imports,UK_DFT_VEH0160,outros,3,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,,2000106,Passenger cars; all generic models and all fuels; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,diesel,110550,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,eletrico,381869,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gas,1319,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gasolina,749208,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hibrido,757157,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hidrogenio,0,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2024,,annual,first_registrations_including_imports,UK_DFT_VEH0160,outros,3,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,,2071394,Passenger cars; all generic models and all fuels; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,diesel,95838,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,eletrico,473225,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gas,212,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,gasolina,610053,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hibrido,890516,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,hidrogenio,1,Passenger cars; generic models; selected fuel; includes used imports
+GB,,2025,,annual,first_registrations_including_imports,UK_DFT_VEH0160,outros,1549,Passenger cars; generic models; selected fuel; includes used imports
+IT,,2025,,annual,new_registrations,IT_UNRAE_2025_TOP50,,1525722,Top 50 passenger-car models; denominator is the full national new-passenger-car market from the same 2025 publication edition
+AT,,2025,,annual,new_registrations,AT_STATISTIK_2025_TOP50,,284978,Top 50 passenger-car models; denominator is the full national new-passenger-car market from the same 2025 publication edition

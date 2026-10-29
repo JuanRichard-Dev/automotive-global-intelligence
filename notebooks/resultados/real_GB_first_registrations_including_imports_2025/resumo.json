@@ -1,0 +1,49 @@
+{
+  "gerado_em_utc": "2026-10-29T16:51:04.476472+00:00",
+  "pais": "GB",
+  "ano": 2025,
+  "origem": "real",
+  "medida": "first_registrations_including_imports",
+  "periodicidade": "anual",
+  "unidades_observadas": 2071394,
+  "mercado_elegivel": 2071394,
+  "cobertura_pct": 100.0,
+  "modelos": 1146,
+  "lider": {
+    "marca": "FORD",
+    "modelo": "PUMA",
+    "unidades": 55376
+  },
+  "descritiva_unidades_modelo": {
+    "count": 1146.0,
+    "mean": 1807.499127399651,
+    "std": 5278.7238651121015,
+    "min": 1.0,
+    "25%": 2.0,
+    "50%": 11.0,
+    "75%": 440.0,
+    "max": 55376.0
+  },
+  "correlacao_pearson_preco_unidades": null,
+  "pares_correlacao": 0,
+  "previsao_exploratoria": {
+    "disponivel": false
+  },
+  "execucao_etl": {
+    "id": "342c07b3-d980-464d-bdb6-d0b137919a1b",
+    "seed": 0,
+    "linhas_sinteticas": 0,
+    "terminada_em": "2026-10-29 13:49:01.627014-03:00"
+  },
+  "fontes": [
+    {
+      "id": "UK_DFT_VEH0160",
+      "organizacao": "UK Department for Transport / Driver and Vehicle Licensing Agency",
+      "titulo": "df_VEH0160_UK — Vehicles registered for the first time by body type, make, generic model, model and fuel",
+      "url": "https://assets.publishing.service.gov.uk/media/6aad4b1ef1f8d2a39605fa1b/df_VEH0160_UK.csv",
+      "licenca": "Open Government Licence v3.0",
+      "cobertura": "BodyType Cars only; all generic models and fuels; separate full annual aggregates and published quarters",
+      "limitacoes": "First UK registrations include imported vehicles, including previously used imports. Not equivalent to SMMT new-car sales. Administrative make/model errors and missing generic-model categories are preserved. Quarterly data must never be interpolated to months. Prices and SUV/sedan/hatch segments absent."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "execucao": "948830df-50f6-4610-841f-d41ea42913db",
+  "modo": "real",
+  "fingerprint_entrada": "9f39ff69ac02c876b5b3b66a4ae35da8d0d5542f0a8503192af3a34de198685e",
+  "arquivos_sha256": {
+    "data/raw/real_sales.csv": "d103f8a6c94efcd1494720394a5575f686857154f4cc2f35d04e67e324cbb9e4",
+    "data/raw/market_totals.csv": "dcad2cd4dd6e174a74f8c5fb3257d79639b1a2924f9a0253c63c00a4bb1c5841",
+    "data/seed/sources.json": "b9958ffc01a73f72f06247c1f6e0f5bd5b9020fb2f868d024c2b075dfa8e722e",
+    "data/seed/media.json": "27eaedc9be67f80cd655bedc79432ab1fc26651ac7055a6f765041d17929f693",
+    "data/seed/fx.json": "4deb6dab112ce09b7063e45a29c8fb921614d07a474be11fb079c77937c3ddf1",
+    "data/seed/world.geojson": "8d1eac4c3e4a62c84fe6d23021a589ffca5da4e4527c92ed7ac6e8709a08b19e",
+    "data/seed/states-br-us.geojson": "c84f59a580b33ed3d6b5ee07272a234bda8cbc51c487e3a08291ef246061712c",
+    "etl/pipeline.py": "ed86e3d2551b463c07244fc9576a60da340eab7c7cf592292e296516b1744ce9",
+    "etl/transforms.py": "e1f1c8a2eadfe7da8a679c44d9a1bddc0128e9be69642904c4220520952c4ad9",
+    "etl/aggregations.py": "35389e020694053bd6eb5ab2c75d996295476d98e11185db6e7c867654a91daa",
+    "etl/bootstrap.py": "a384fdfec80cca708f2bf57802a0431571e8c0e8ebf1727449153dcbd39cccf1",
+    "db/001_schema.sql": "517f0bb20851fd44af87894c2b7a0168123b17d62f0ec5a47cce22aba6fed440",
+    "db/002_seed.sql": "f43609dd9556d9218c9d7cd578e1eef0259b9543352702a74d17e8f5e5bc9604",
+    "db/003_views.sql": "26bf489ebde17e84a10706da1c6e1069dff782751064e6681e3f2018ad2ad289"
+  },
+  "linhas_entrada_real": 35167,
+  "iniciada_em": "2026-10-29T17:10:35.638113+00:00",
+  "recebidos": 35167,
+  "rejeitados": 0,
+  "revisao_outliers": 0,
+  "tratados": 35167,
+  "duplicidades": 0,
+  "origens": {
+    "real": 35167
+  },
+  "campos_ausentes": {
+    "state_code": 35167,
+    "city": 35167,
+    "price": 35167,
+    "currency": 35167
+  },
+  "precos_sem_cambio": 0,
+  "carregados_postgresql": 35167,
+  "terminada_em": "2026-10-29T17:11:25.447996+00:00"
+}

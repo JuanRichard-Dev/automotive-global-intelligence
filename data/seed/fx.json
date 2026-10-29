@@ -1,0 +1,182 @@
+[
+  {
+    "moeda": "USD",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 1.0,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "JPY",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.006336307325112235,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "CZK",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.04579431575488747,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "DKK",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.14917984533461776,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "GBP",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 1.3328073824380215,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "HUF",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.003034178730815282,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "PLN",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.25329395729213994,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "RON",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.20845797188154352,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "SEK",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.1006363103028115,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "CHF",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 1.2068405671609481,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "ISK",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.008174486803519062,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "NOK",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.10733022091736054,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "TRY",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.0200853854052204,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "AUD",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.7032038345105954,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "BRL",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.18700523279216424,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "CAD",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.713097979022768,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "CNY",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.14998049580996192,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "HKD",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.12747810577824525,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "IDR",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 5.513104377157651e-05,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "ILS",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.32791224303737904,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "INR",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.010512570299867532,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "KRW",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.0007531544675907163,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "MXN",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.053657362848893164,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "MYR",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.24456044920161432,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "NZD",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.5702741407528641,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "PHP",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.015626532871778342,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "SGD",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.7805390269513475,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "THB",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.029611727837679926,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "ZAR",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 0.0600647514181207,
+    "fonte_id": "ECB_FX"
+  },
+  {
+    "moeda": "EUR",
+    "data_referencia": "2026-10-27",
+    "usd_por_unidade": 1.115,
+    "fonte_id": "ECB_FX"
+  }
+]

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+web/node_modules/
+web/.next/
+.env
+data/bronze/
+data/quarantine/
+*.log
+*.pyc
+*.tmp

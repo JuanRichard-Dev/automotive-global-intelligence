@@ -1,0 +1,65 @@
+{
+  "sources": [
+    {
+      "id": "IT_UNRAE_2025_TOP50",
+      "organizacao": "UNRAE",
+      "titulo": "Immatricolazioni Italia 2025 — Top 50 e totale nazionale",
+      "url": "https://www.unrae.it/files/06%20Top%2050%20Dicembre%202025_6957f75508974.pdf",
+      "ano_inicio": 2025,
+      "ano_fim": 2025,
+      "licenca": "Copyright da publicação preservado; licença aberta específica não identificada. Extrato factual para pesquisa pessoal com atribuição; não redistribuir PDF como se fosse CC.",
+      "licenca_url": "https://www.unrae.it/",
+      "acesso_em": "2026-10-29",
+      "tipo": "primaria",
+      "medida": "new_registrations",
+      "cobertura": "Top 50 nacional de automóveis novos, ano completo 2025; todos os combustíveis; sem desagregação estadual",
+      "limitacoes": "Cobertura parcial top 50. Estado, cidade, combustível, segmento e preço não publicados neste ranking permanecem ausentes. Não somar com outra fonte do mesmo país/ano/medida. Áustria: tabela M1; não confundir com usados, elétricos isolados ou estoque. Itália: coluna gen./dic. 2025, não dezembro isolado.",
+      "sha256": null,
+      "status": "carregada"
+    },
+    {
+      "id": "AT_STATISTIK_2025_TOP50",
+      "organizacao": "STATISTIK AUSTRIA",
+      "titulo": "Fahrzeugzulassungen 2025 — Tabelle 7 Top 50 Pkw-Typen",
+      "url": "https://www.statistik.at/fileadmin/pages/77/Pressemappe_2025.pdf",
+      "ano_inicio": 2025,
+      "ano_fim": 2025,
+      "licenca": "Copyright da publicação preservado; licença aberta específica não identificada. Extrato factual para pesquisa pessoal com atribuição; não redistribuir PDF como se fosse CC.",
+      "licenca_url": "https://www.statistik.at/",
+      "acesso_em": "2026-10-29",
+      "tipo": "oficial",
+      "medida": "new_registrations",
+      "cobertura": "Top 50 nacional de automóveis novos, ano completo 2025; todos os combustíveis; sem desagregação estadual",
+      "limitacoes": "Cobertura parcial top 50. Estado, cidade, combustível, segmento e preço não publicados neste ranking permanecem ausentes. Não somar com outra fonte do mesmo país/ano/medida. Áustria: tabela M1; não confundir com usados, elétricos isolados ou estoque. Itália: coluna gen./dic. 2025, não dezembro isolado.",
+      "sha256": "cf402b9c1d57f66300a53a95f0eefbe9f046c571720835e83ab88c9fbb7e8e63",
+      "status": "carregada"
+    }
+  ],
+  "downloads": [
+    {
+      "url": "https://www.unrae.it/files/06%20Top%2050%20Dicembre%202025_6957f75508974.pdf",
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "extraction_method": "web_pdf_text",
+      "evidence_path": "etl\\sources\\reviewed_2025_rankings.json",
+      "evidence_sha256": "51986e865773e2841cdebac3724c1e28e386278bb104c55234d5477d68da6adc"
+    },
+    {
+      "url": "https://www.statistik.at/fileadmin/pages/77/Pressemappe_2025.pdf",
+      "path": "data\\raw\\adicionais\\more_countries\\AT_STATISTIK_2025.pdf",
+      "sha256": "cf402b9c1d57f66300a53a95f0eefbe9f046c571720835e83ab88c9fbb7e8e63",
+      "bytes": 981542,
+      "extraction_method": "downloaded_pdf_text_verified_against_web_pdf_text",
+      "evidence_path": "etl\\sources\\reviewed_2025_rankings.json",
+      "evidence_sha256": "51986e865773e2841cdebac3724c1e28e386278bb104c55234d5477d68da6adc"
+    }
+  ],
+  "extraction_method": "web_pdf_text",
+  "totals": {
+    "IT": 1525722,
+    "AT": 284978
+  },
+  "rows": 100,
+  "source_scope": "Published statistical facts; attribution required; no open license inferred for PDF publications"
+}

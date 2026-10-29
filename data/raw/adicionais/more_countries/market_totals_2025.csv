@@ -1,0 +1,3 @@
+country_iso,state_code,year,month,period_kind,metric,source_id,fuel,units,scope
+IT,,2025,,annual,new_registrations,IT_UNRAE_2025_TOP50,,1525722,Top 50 passenger-car models; denominator is the full national new-passenger-car market from the same 2025 publication edition
+AT,,2025,,annual,new_registrations,AT_STATISTIK_2025_TOP50,,284978,Top 50 passenger-car models; denominator is the full national new-passenger-car market from the same 2025 publication edition

@@ -1,0 +1,63 @@
+{
+  "source_raw_rows_all_body_types": 63715,
+  "passenger_car_rows": 33908,
+  "periods_inspected": [
+    "2026 Q2",
+    "2026 Q1",
+    "2025 Q4",
+    "2025 Q3",
+    "2025 Q2",
+    "2025 Q1",
+    "2024 Q4",
+    "2024 Q3",
+    "2024 Q2",
+    "2024 Q1",
+    "2023 Q4",
+    "2023 Q3",
+    "2023 Q2",
+    "2023 Q1",
+    "2022 Q4",
+    "2022 Q3",
+    "2022 Q2",
+    "2022 Q1",
+    "2021 Q4",
+    "2021 Q3",
+    "2021 Q2",
+    "2021 Q1"
+  ],
+  "suppressed_or_nonnumeric_cells": [],
+  "suppressed_or_nonnumeric_count": 0,
+  "annual_canonical_rows": 8373,
+  "quarterly_canonical_rows": 25294,
+  "annual_denominators": {
+    "2021": 1677245,
+    "2022": 1652128,
+    "2023": 1945832,
+    "2024": 2000106,
+    "2025": 2071394
+  },
+  "unit_totals_reconcile": true,
+  "state_and_city": "not provided; remain null",
+  "segment": "BodyType Cars does not identify SUV/sedan/hatch; remains null",
+  "price": "not published; remains null",
+  "original_dft_fuel_mapping": {
+    "Petrol": "gasolina",
+    "Diesel": "diesel",
+    "Battery electric": "eletrico",
+    "Hybrid electric (petrol)": "hibrido",
+    "Hybrid electric (diesel)": "hibrido",
+    "Plug-in hybrid electric (petrol)": "hibrido",
+    "Plug-in hybrid electric (diesel)": "hibrido",
+    "Range extended electric": "hibrido",
+    "Fuel cell electric": "hidrogenio",
+    "Gas": "gas",
+    "Other fuel types": "outros"
+  },
+  "notes": [
+    "Quarterly facts are not interpolated to months. Do not aggregate quarterly and annual snapshots together.",
+    "DfT first registrations include used imports and differ from SMMT manufacturer-reported new vehicles.",
+    "Source metadata supports [c], [x] and [z], but actual selected passenger-car cells in this downloaded edition are all nonnegative integers.",
+    "Zero published in source is retained as actual zero internally; zero-only canonical groups are omitted without changing totals.",
+    "Missing-model generic categories remain labelled as published and are included in denominators, never inferred into known models."
+  ]
+}

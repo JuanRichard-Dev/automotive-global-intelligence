@@ -1,0 +1,24 @@
+{
+  "verified_at_utc": "2026-10-29T17:05:49.095600+00:00",
+  "canonical_rows": 100,
+  "id_min": -35167,
+  "id_max": -35068,
+  "unique_negative_ids": true,
+  "IT": {
+    "models": 50,
+    "units_observed": 1032928,
+    "eligible_total": 1525722,
+    "method": "web_pdf_text",
+    "original_pdf_sha256": null
+  },
+  "AT": {
+    "models": 50,
+    "units_observed": 152867,
+    "eligible_total": 284978,
+    "method": "downloaded_pdf_text_verified_against_web_pdf_text",
+    "original_pdf_sha256": "cf402b9c1d57f66300a53a95f0eefbe9f046c571720835e83ab88c9fbb7e8e63",
+    "table7_other_models": 132111,
+    "reconciles_all_market": true
+  },
+  "limitations": "Top50 only; missing fuel/segment/state/city/price left absent; source publication copyright preserved; no open license inferred; PDFs not for redistribution as CC."
+}

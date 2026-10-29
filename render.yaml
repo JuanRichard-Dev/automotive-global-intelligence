@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: automotive-global-intelligence-api
+    runtime: docker
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: automotive-global-intelligence-db
+          property: connectionString
+      - key: CORS_ORIGINS
+        value: https://automotive-global-intelligence-web.onrender.com
+
+  - type: worker
+    name: automotive-global-intelligence-etl
+    runtime: docker
+    dockerfilePath: ./etl/Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: automotive-global-intelligence-db
+          property: connectionString
+      - key: SPARK_MASTER
+        value: local[2]
+      - key: SPARK_LOCAL_IP
+        value: 127.0.0.1
+    startCommand: python -m etl.pipeline --force
+
+  - type: web
+    name: automotive-global-intelligence-web
+    runtime: docker
+    dockerfilePath: ./web/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: API_INTERNAL_URL
+        value: https://automotive-global-intelligence-api.onrender.com
+
+databases:
+  - name: automotive-global-intelligence-db
+    databaseName: automotive
+    user: automotive
+    plan: free
+    postgresMajorVersion: 18

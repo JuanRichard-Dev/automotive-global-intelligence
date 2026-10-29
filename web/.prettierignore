@@ -1,0 +1,6 @@
+.next
+.next-current
+node_modules
+pnpm-lock.yaml
+public/maplibre-worker.js
+public/maplibre-worker.LICENSE.txt

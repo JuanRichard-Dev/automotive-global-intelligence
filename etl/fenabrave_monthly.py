@@ -68,22 +68,33 @@ def collect(start: int, end: int):
         # For the present year, don't request an as-yet unpublished current-month report.
         last_month = (today.month - 1) if year == today.year else 12
         for month in range(1, last_month + 1):
-            url = f"{BASE}/{year}_{month:02d}_02.pdf"
-            try:
-                resp = session.get(url, timeout=(6, 16))
-                resp.raise_for_status()
-                if len(resp.content) > 40_000_000:
-                    raise ValueError("PDF larger than 40 MB")
-                data = parse_pdf(resp.content, year, month)
-                accepted.append({
-                    "ano": year, "mes": month, **data, "url": url,
-                    "sha256": hashlib.sha256(resp.content).hexdigest(),
+            # Fenabrave uses _2.pdf on older reports and _02.pdf on newer ones.
+            suffixes = ("2", "02") if year <= 2023 else ("02", "2")
+            paths = [f"{BASE}/{year}_{month:02d}_{suffix}.pdf" for suffix in suffixes]
+            loaded = False
+            errors = []
+            for url in paths:
+                try:
+                    resp = session.get(url, timeout=(5, 12))
+                    resp.raise_for_status()
+                    if len(resp.content) > 40_000_000:
+                        raise ValueError("PDF larger than 40 MB")
+                    data = parse_pdf(resp.content, year, month)
+                    accepted.append({
+                        "ano": year, "mes": month, **data, "url": url,
+                        "sha256": hashlib.sha256(resp.content).hexdigest(),
+                    })
+                    print(f"OK {year}-{month:02d}: {data['total']:,} units", flush=True)
+                    loaded = True
+                    break
+                except (requests.RequestException, ValueError, RuntimeError) as exc:
+                    errors.append(f"{url}: {type(exc).__name__} {str(exc)[:90]}")
+            if not loaded:
+                unavailable.append({
+                    "ano": year, "mes": month, "urls_tentadas": paths,
+                    "motivo": "; ".join(errors)[:250],
                 })
-                print(f"OK {year}-{month:02d}: {data['total']:,} units", flush=True)
-            except (requests.RequestException, ValueError, RuntimeError) as exc:
-                unavailable.append({"ano": year, "mes": month, "url": url,
-                                    "motivo": str(exc)[:200]})
-                print(f"SKIP {year}-{month:02d}: {type(exc).__name__}", flush=True)
+                print(f"SKIP {year}-{month:02d}: no compatible report", flush=True)
             time.sleep(0.1)
     report = {"intervalo": [start, end], "registros_validados": len(accepted),
               "arquivos_indisponiveis_ou_nao_processados": unavailable,

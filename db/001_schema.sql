@@ -104,4 +104,32 @@ CREATE TABLE IF NOT EXISTS atlas_global_annual (
   PRIMARY KEY (pais_iso, ano, medida)
 );
 ALTER TABLE atlas_global_annual ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON atlas_global_annual FROM anon, authenticated;
+DO $ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    EXECUTE 'REVOKE ALL ON atlas_global_annual FROM anon';
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    EXECUTE 'REVOKE ALL ON atlas_global_annual FROM authenticated';
+  END IF;
+END $;
+
+-- Official Fenabrave monthly reports. Keep monthly totals distinct from model rankings.
+CREATE TABLE IF NOT EXISTS atlas_fenabrave_mensal (
+  ano smallint NOT NULL, mes smallint NOT NULL CHECK(mes BETWEEN 1 AND 12),
+  autos bigint NOT NULL CHECK(autos>=0),
+  comerciais_leves bigint NOT NULL CHECK(comerciais_leves>=0),
+  total bigint NOT NULL CHECK(total=autos+comerciais_leves),
+  acumulado bigint NOT NULL CHECK(acumulado>=total),
+  fonte_url text NOT NULL, arquivo_sha256 char(64) NOT NULL,
+  carregado_em timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY(ano,mes)
+);
+ALTER TABLE atlas_fenabrave_mensal ENABLE ROW LEVEL SECURITY;
+DO $ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    EXECUTE 'REVOKE ALL ON atlas_fenabrave_mensal FROM anon';
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    EXECUTE 'REVOKE ALL ON atlas_fenabrave_mensal FROM authenticated';
+  END IF;
+END $;

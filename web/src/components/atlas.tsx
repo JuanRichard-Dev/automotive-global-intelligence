@@ -103,6 +103,10 @@ type Initial = {
     origens: Record<string, unknown>;
   };
   paises: { iso: string; nome: string; tem_real: boolean }[];
+  fenabrave_mensal: {
+    ano: number; mes: number; autos: number; comerciais_leves: number;
+    total: number; acumulado: number; fonte_url: string;
+  }[];
   globais: {
     iso: string; pais: string; ano: number; unidades: number; medida: string;
     fonte: string; fonte_url: string; nota: string;
@@ -213,6 +217,7 @@ function Dashboard({ initial }: { initial: Initial }) {
     const validYears = [
       ...(opt?.anos || []),
       ...(initial.globais || []).filter((g) => g.iso === iso).map((g) => g.ano),
+      ...(iso === 'BR' ? (initial.fenabrave_mensal || []).map((m) => m.ano) : []),
     ];
     update({
       pais: iso,
@@ -271,12 +276,18 @@ function Dashboard({ initial }: { initial: Initial }) {
   const yr = initial.disponibilidade
     .filter((d) => d.iso === f.pais && d.origem === f.origem && d.periodicidade === f.periodicidade)
     .flatMap((d) => d.anos);
+  const monthlyRows = (initial.fenabrave_mensal || [])
+    .filter((row) => f.pais === 'BR' && row.ano === f.ano);
   const globalRows = (initial.globais || [])
     .filter((row) => row.iso === f.pais)
     .sort((a, b) => a.ano - b.ano);
   const selectedGlobal = globalRows.find((row) => row.ano === f.ano);
   const hasDetailedRecords = initial.paises.some((row) => row.iso === f.pais && row.tem_real);
-  const years = [...new Set([...yr, ...globalRows.map((row) => row.ano)])].sort((a, b) => b - a);
+  const availableMonthlyYears = f.pais === 'BR'
+    ? (initial.fenabrave_mensal || []).map((r) => r.ano)
+    : [];
+  const years = [...new Set([...yr, ...globalRows.map((row) => row.ano), ...availableMonthlyYears])]
+    .sort((a, b) => b - a);
   useEffect(() => {
     if (reduced) return;
     let dispose = () => {};
@@ -589,6 +600,39 @@ function Dashboard({ initial }: { initial: Initial }) {
                   Fenabrave — Anuário 2025, ranking internacional (dados JATO)
                 </a>. Total de automóveis e comerciais leves por ano. Não somar estes valores aos rankings de modelos.
               </p>
+            </div>
+          </section>
+        )}
+        {f.pais === 'BR' && monthlyRows.length > 0 && (
+          <section className="section" aria-label="Emplacamentos mensais Fenabrave">
+            <div className="section-heading">
+              <div>
+                <span className="eyebrow">BRASIL · FONTE FENABRAVE</span>
+                <h2>Emplacamentos <em>mensais de {f.ano}.</em></h2>
+              </div>
+              <p>Automóveis e comerciais leves · dados mensais validados.<br />
+                O ano atual pode estar incompleto.</p>
+            </div>
+            <div className="global-market-panel">
+              <div className="monthly-table-wrap">
+                <table className="monthly-table">
+                  <caption className="sr-only">Emplacamentos mensais no Brasil em {f.ano}</caption>
+                  <thead><tr><th>Mês</th><th>Automóveis</th><th>Comerciais leves</th><th>Total</th><th>Acumulado</th><th>Fonte</th></tr></thead>
+                  <tbody>
+                    {monthlyRows.map((row) => (
+                      <tr key={row.mes}>
+                        <td>{new Date(Date.UTC(f.ano, row.mes - 1, 1)).toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' })}</td>
+                        <td>{num(row.autos)}</td>
+                        <td>{num(row.comerciais_leves)}</td>
+                        <td><strong>{num(row.total)}</strong></td>
+                        <td>{num(row.acumulado)}</td>
+                        <td><a href={row.fonte_url} target="_blank" rel="noreferrer">PDF oficial</a></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="global-market-source">Somente documentos cuja tabela de automóveis e comerciais leves pôde ser validada. Meses ausentes não significam zero emplacamentos.</p>
             </div>
           </section>
         )}

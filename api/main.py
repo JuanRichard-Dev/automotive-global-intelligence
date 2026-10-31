@@ -44,6 +44,18 @@ def global_markets():
     """), nota="Série Fenabrave/JATO 2020–2025: totais anuais; não equivalem a ranking de modelos.")
 
 
+@app.get('/fenabrave/mensal')
+def monthly_fenabrave():
+    """Official Brazilian monthlies only when the PDF's row checksum passed validation."""
+    exists=query("SELECT to_regclass('public.atlas_fenabrave_mensal') IS NOT NULL AS ok",one=True)
+    if not exists or not exists['ok']:
+        return dict(items=[],nota="Arquivo histórico ainda não processado")
+    return dict(items=query("""
+      SELECT ano,mes,autos,comerciais_leves,total,acumulado,fonte_url
+      FROM atlas_fenabrave_mensal ORDER BY ano,mes
+    """),nota="Emplacamentos Fenabrave por mês: não equivalem aos rankings completos por modelo.")
+
+
 @app.get('/paises')
 def countries(pagina:int=Query(1,ge=1),tamanho:int=Query(200,ge=1,le=200)):
     return dict(items=query('''SELECT p.id,p.iso,p.nome,p.continente,
@@ -147,7 +159,7 @@ def bootstrap():
     def load():
         config={r['chave']:r['valor'] for r in query('SELECT chave,valor FROM app_config')}
         opts=query('SELECT p.iso,a.origem,a.medida,a.periodicidade,array_agg(DISTINCT ano ORDER BY ano) anos,array_remove(array_agg(DISTINCT mes ORDER BY mes),NULL) meses FROM mv_agregados a JOIN dim_pais p ON p.id=a.pais_id GROUP BY p.iso,a.origem,a.medida,a.periodicidade')
-        return dict(config=config,paises=countries(1,200)['items'],globais=global_markets()['items'],disponibilidade=opts,segmentos=query('SELECT codigo,nome FROM dim_segmento ORDER BY id'),combustiveis=query('SELECT codigo,nome FROM dim_combustivel ORDER BY id'),medidas=query('SELECT * FROM dim_medida'),execucao=query("SELECT id,terminada_em,qualidade FROM execucao_etl WHERE status='concluida' ORDER BY terminada_em DESC LIMIT 1",one=True),painel=panel(Filters(**config['padrao'])))
+        return dict(config=config,paises=countries(1,200)['items'],globais=global_markets()['items'],fenabrave_mensal=monthly_fenabrave()['items'],disponibilidade=opts,segmentos=query('SELECT codigo,nome FROM dim_segmento ORDER BY id'),combustiveis=query('SELECT codigo,nome FROM dim_combustivel ORDER BY id'),medidas=query('SELECT * FROM dim_medida'),execucao=query("SELECT id,terminada_em,qualidade FROM execucao_etl WHERE status='concluida' ORDER BY terminada_em DESC LIMIT 1",one=True),painel=panel(Filters(**config['padrao'])))
     return cached(('bootstrap',),load)
 
 @app.get('/painel')

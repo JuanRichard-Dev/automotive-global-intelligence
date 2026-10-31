@@ -1,0 +1,39 @@
+name: Fenabrave - Coleta de informativos mensais
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "etl/fenabrave_monthly.py"
+      - ".github/workflows/fenabrave-monthly.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  fenabrave:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PDF and PostgreSQL readers
+        run: |
+          python -m pip install --upgrade pip
+          pip install "PyMuPDF>=1.26,<2" "requests>=2.32,<3" "psycopg[binary]==3.3.6"
+      - name: Collect and validate official PDFs (2020-current)
+        env:
+          ATLAS_DATABASE_URL: ${{ secrets.ATLAS_DATABASE_URL }}
+        run: python -m etl.fenabrave_monthly --inicio 2020
+      - name: Publish audit manifest (including unavailable PDFs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fenabrave-mensal-auditoria
+          path: fenabrave_monthly_report.json
+          if-no-files-found: warn

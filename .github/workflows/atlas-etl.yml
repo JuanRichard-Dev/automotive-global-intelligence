@@ -1,0 +1,55 @@
+name: Carregar dados reais no Supabase Atlas
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Instalar ferramentas do pipeline
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validar configuracao de banco
+        env:
+          DATABASE_URL: ${{ secrets.ATLAS_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Configure ATLAS_DATABASE_URL em GitHub Actions Secrets"
+            exit 1
+          fi
+      - name: Executar ETL real (sem gerar dados ficticios)
+        env:
+          DATABASE_URL: ${{ secrets.ATLAS_DATABASE_URL }}
+          SPARK_MASTER: local[2]
+          SPARK_DRIVER_MEMORY: 3g
+          SPARK_LOCAL_IP: 127.0.0.1
+        run: python -m etl.pipeline
+      - name: Validar dados carregados
+        env:
+          DATABASE_URL: ${{ secrets.ATLAS_DATABASE_URL }}
+        run: |
+          python - <<'PY'
+          import os, psycopg
+          with psycopg.connect(os.environ['DATABASE_URL']) as conn:
+              count = conn.execute("select count(*) from fato_vendas where origem='real'").fetchone()[0]
+              state = conn.execute("select status from execucao_etl order by iniciada_em desc limit 1").fetchone()
+              assert count > 0 and state and state[0] == 'concluida', 'ETL nao validado'
+              print(f'OK: {count} registros reais no banco')
+          PY

@@ -436,8 +436,15 @@ function Dashboard({ initial }: { initial: Initial }) {
               value={f.pais}
               onChange={selectCountry}
               items={initial.paises
-                .filter((x) => x.tem_real)
-                .map((x) => ({ value: x.iso, label: x.nome }))}
+                .map((x) => ({
+                  value: x.iso,
+                  label: `${x.iso === 'CN' ? 'China' : x.nome}${x.tem_real ? '' : ' · Sem registros'}`,
+                  available: x.tem_real,
+                }))
+                .sort((a, b) =>
+                  Number(b.available) - Number(a.available) ||
+                  a.label.localeCompare(b.label, 'pt-BR'),
+                )}
             />
             {!!states.data?.items.length && (
               <FilterSelect
@@ -469,6 +476,13 @@ function Dashboard({ initial }: { initial: Initial }) {
               ]}
             />
           </div>
+            {!initial.paises.find((x) => x.iso === f.pais)?.tem_real && (
+              <p className="country-coverage-note" role="status">
+                Este país está cadastrado no atlas, mas ainda não possui registros
+                automotivos reais na base. Rankings e indicadores ficarão
+                indisponíveis até que exista uma fonte compatível.
+              </p>
+            )}
           <div aria-live="polite">
             {panel.isPending ? (
               <div className="loading-line" aria-label="Carregando" />

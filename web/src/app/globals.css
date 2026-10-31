@@ -1422,3 +1422,12 @@ footer > a:last-child {
 .global-market-source { font-size: 11px; line-height: 1.7; color: var(--muted); padding-top: 15px; }
 .global-market-source a { text-decoration: underline; color: var(--gold); }
 @media(max-width:650px) { .global-market-bars { gap: 6px; } .global-market-value { font-size: 8px; } .global-market-label { font-size: 10px; } }
+
+/* Official Fenabrave monthly data, kept distinct from detailed model rankings */
+.monthly-table-wrap { overflow-x: auto; }
+.monthly-table { border-collapse: collapse; width: 100%; min-width: 660px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.monthly-table th, .monthly-table td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--line); }
+.monthly-table th:first-child, .monthly-table td:first-child { text-align: left; text-transform: capitalize; }
+.monthly-table thead th { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.monthly-table td a { color: var(--gold); text-decoration: underline; }
+.monthly-table tbody tr:hover { background: #c6aa7b12; }

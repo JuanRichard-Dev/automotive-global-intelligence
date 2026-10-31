@@ -119,7 +119,7 @@ def run(rows=0,seed=0,force=False):
         annual_ranking(clean,state=True).filter(F.col('posicao')<=10).write.mode('overwrite').parquet(str(DATA/'analytics/rankings_estado_spark'))
         monthly_seasonality(clean).write.mode('overwrite').parquet(str(DATA/'analytics/sazonalidade_pais_spark'))
         monthly_seasonality(clean,state=True).write.mode('overwrite').parquet(str(DATA/'analytics/sazonalidade_estado_spark'))
-        jdbc=urlparse(DSN);url=f'jdbc:postgresql://{jdbc.hostname}:{jdbc.port or 5432}/{jdbc.path.lstrip("/")}?reWriteBatchedInserts=true'
+        jdbc=urlparse(DSN);url=f'jdbc:postgresql://{jdbc.hostname}:{jdbc.port or 5432}/{jdbc.path.lstrip("/")}?reWriteBatchedInserts=true&prepareThreshold=0'
         print(f'Carga JDBC de {report["tratados"]:,} observações…',flush=True)
         facts.coalesce(4).write.format('jdbc').option('url',url).option('dbtable','fato_vendas').option('user',unquote(jdbc.username or '')).option('password',unquote(jdbc.password or '')).option('driver','org.postgresql.Driver').option('batchsize','10000').mode('append').save()
         import csv

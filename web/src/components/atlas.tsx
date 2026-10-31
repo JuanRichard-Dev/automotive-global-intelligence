@@ -536,7 +536,67 @@ function Dashboard({ initial }: { initial: Initial }) {
             ) : null}
           </div>
           {!showDetailed && selectedGlobal && (
-            <div className="global-priority">{section.trim()}</div>
+            <div className="global-priority">{globalRows.length > 0 && (
+          <section className="section global-section" aria-labelledby="global-data-title">
+            <div className="section-heading">
+              <div>
+                <span className="eyebrow">PANORAMA INTERNACIONAL · FENABRAVE / JATO</span>
+                <h2 id="global-data-title">Mercado nacional <em>2020–2025.</em></h2>
+              </div>
+              <p>Automóveis e comerciais leves · totais nacionais anuais.<br />
+                Estes totais não representam rankings de marcas ou modelos.</p>
+            </div>
+            <div className="global-market-panel">
+              <div className="global-market-heading">
+                <span>Total nacional · {f.ano}</span>
+                <strong>{selectedGlobal ? num(selectedGlobal.unidades) : 'Ano não disponível'}</strong>
+              </div>
+              <div className="global-market-bars" role="img"
+                aria-label={`Totais anuais de automóveis e comerciais leves de ${f.pais}`}>
+                {globalRows.map((row) => {
+                  const peak = Math.max(...globalRows.map((item) => item.unidades), 1);
+                  const percent = (row.unidades / peak) * 100;
+                  return (
+                    <button type="button" key={row.ano}
+                      className={row.ano === f.ano ? 'global-market-year selected' : 'global-market-year'}
+                      onClick={() => update({ ano: row.ano, periodicidade: 'anual', mes: null })}>
+                      <span className="global-market-value">{num(row.unidades)}</span>
+                      <span className="global-market-track"><span style={{ height: `${percent}%` }} /></span>
+                      <span className="global-market-label">{row.ano}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="global-market-summary-grid">
+                <div><span>Total em {f.ano}</span><strong>{num(selectedGlobal?.unidades)}</strong></div>
+                <div><span>Variação frente ao ano anterior</span>
+                  <strong>{previousGlobal && selectedGlobal
+                    ? `${selectedGlobal.unidades >= previousGlobal.unidades ? '+' : ''}${(((selectedGlobal.unidades / previousGlobal.unidades)-1)*100).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`
+                    : '—'}</strong></div>
+                <div><span>Mercados com total publicado</span><strong>{globalPeers.length}</strong></div>
+              </div>
+              <div className="global-comparison">
+                <h3>Comparativo internacional · {f.ano}</h3>
+                <p>Totais nacionais anuais comparáveis da mesma fonte e categoria.</p>
+                <div className="global-comparison-list">
+                  {globalPeers.slice(0,12).map((country,index) => (
+                    <button type="button" key={country.iso}
+                      className={country.iso === f.pais ? 'global-peer selected' : 'global-peer'}
+                      onClick={() => selectCountry(country.iso)}>
+                      <span>{index+1}. {initial.paises.find(p => p.iso === country.iso)?.nome || country.pais}</span>
+                      <strong>{num(country.unidades)}</strong>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="global-market-source">
+                Fonte: <a href={globalRows[0].fonte_url} target="_blank" rel="noreferrer">
+                  Fenabrave — Anuário 2025, ranking internacional (dados JATO)
+                </a>. Total de automóveis e comerciais leves por ano. Não somar estes valores aos rankings de modelos.
+              </p>
+            </div>
+          </section>
+        )}</div>
           )}
           <div className="overview">
             <div className="map-panel">

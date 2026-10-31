@@ -19,11 +19,11 @@ import requests
 
 BASE = "https://www.fenabrave.org.br/portal/files"
 OUT = Path("fenabrave_monthly_report.json")
-NUM = r"(\\d{1,3}(?:\\.\\d{3})+|\\d+)"
+NUM = r"(\d{1,3}(?:\.\d{3})+|\d+)"
 ROW = {
-    "auto": re.compile(r"\\bA\\s*\\)\\s*Autos\\s+" + NUM + r"\\s+" + NUM + r"\\s+" + NUM, re.I),
-    "leves": re.compile(r"\\bB\\s*\\)\\s*Com\\.?\\s*Leves\\s+" + NUM + r"\\s+" + NUM + r"\\s+" + NUM, re.I),
-    "total": re.compile(r"\\bA\\s*\\+\\s*B\\s+" + NUM + r"\\s+" + NUM + r"\\s+" + NUM, re.I),
+    "auto": re.compile(r"\bA\s*\)\s*Autos\s+" + NUM + r"\s+" + NUM + r"\s+" + NUM, re.I),
+    "leves": re.compile(r"\bB\s*\)\s*Com\.?\s*Leves\s+" + NUM + r"\s+" + NUM + r"\s+" + NUM, re.I),
+    "total": re.compile(r"\bA\s*\+\s*B\s+" + NUM + r"\s+" + NUM + r"\s+" + NUM, re.I),
 }
 
 def parse_pdf(blob: bytes, year: int, month: int):

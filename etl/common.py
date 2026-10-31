@@ -8,7 +8,7 @@ DATA=ROOT/'data'
 DSN=os.getenv('DATABASE_URL','postgresql://automotive:automotive_local@127.0.0.1:55432/automotive')
 
 def connect():
-    return psycopg.connect(DSN,row_factory=dict_row)
+    return psycopg.connect(DSN,row_factory=dict_row,prepare_threshold=None)
 
 def load_json(name):
     return json.loads((DATA/'seed'/name).read_text(encoding='utf-8'))

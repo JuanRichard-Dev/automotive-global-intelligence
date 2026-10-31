@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
@@ -288,8 +288,11 @@ function Dashboard({ initial }: { initial: Initial }) {
   );
   const showDetailed = hasDetailedRecords;
   const previousGlobal = globalRows.find(row => row.ano === f.ano - 1);
-  const globalPeers = (initial.globais || []).filter(row => row.ano === f.ano)
-    .sort((a,b) => b.unidades - a.unidades);
+  const globalPeers = useMemo(() => (initial.globais || [])
+    .filter(row => row.ano === f.ano).sort((a,b) => b.unidades - a.unidades),
+    [initial.globais, f.ano]);
+  const mapGlobalTotals = useMemo(() => globalPeers.map(row =>
+    ({ iso: row.iso, unidades: row.unidades })), [globalPeers]);
   const availableMonthlyYears = f.pais === 'BR'
     ? (initial.fenabrave_mensal || []).map((r) => r.ano)
     : [];
@@ -538,7 +541,7 @@ function Dashboard({ initial }: { initial: Initial }) {
               <AtlasMap
                 filters={f}
                 mode={!showDetailed && globalRows.length ? 'global' : 'detalhado'}
-                globalTotals={globalPeers.map(row => ({iso:row.iso,unidades:row.unidades}))}
+                globalTotals={mapGlobalTotals}
                 onCountry={selectCountry}
                 onState={(v) => update({ estado: v })}
               />

@@ -1,0 +1,35 @@
+name: Verificar interface Motor Atlas
+
+on:
+  push:
+    branches:
+      - fix/market-dashboard-coverage
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+      - name: Install frontend dependencies
+        working-directory: web
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck frontend
+        working-directory: web
+        run: pnpm typecheck
+      - name: Build frontend
+        working-directory: web
+        run: pnpm build

@@ -10,6 +10,8 @@ export interface AtlasMapProps {
   filters: Record<string, string | number | null>;
   onCountry: (iso: string) => void;
   onState: (code: string) => void;
+  mode?: 'detalhado' | 'global';
+  globalTotals?: { iso: string; unidades: number }[];
 }
 
 type AtlasGeometry =
@@ -37,13 +39,14 @@ interface MapResponse {
 const EMPTY: MapResponse = { type: 'FeatureCollection', features: [] };
 const units = new Intl.NumberFormat('pt-BR');
 
-function queryFor(filters: AtlasMapProps['filters']) {
+function queryFor(filters: AtlasMapProps['filters'], mode: 'detalhado' | 'global') {
   const query = new URLSearchParams();
   Object.entries(filters)
     .sort(([a], [b]) => a.localeCompare(b))
     .forEach(([key, value]) => {
       if (value !== null && value !== '') query.set(key, String(value));
     });
+  query.set('modo', mode);
   return query.toString();
 }
 
@@ -83,7 +86,7 @@ function boundsOf(features: Territory[]): [number, number, number, number] | nul
   return Number.isFinite(west) ? [west, south, east, north] : null;
 }
 
-export function AtlasMap({ filters, onCountry, onState }: AtlasMapProps) {
+export function AtlasMap({ filters, onCountry, onState, mode = 'detalhado', globalTotals = [] }: AtlasMapProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LibreMap | null>(null);
   const handlers = useRef({ onCountry, onState });
@@ -95,7 +98,8 @@ export function AtlasMap({ filters, onCountry, onState }: AtlasMapProps) {
   const [states, setStates] = useState<MapResponse>(EMPTY);
   const [showStates, setShowStates] = useState(true);
   const [hover, setHover] = useState<string | null>(null);
-  const query = useMemo(() => queryFor(filters), [filters]);
+  const query = useMemo(() => queryFor(filters, mode), [filters, mode]);
+  const totals = useMemo(() => new Map(globalTotals.map(x => [x.iso, x.unidades])), [globalTotals]);
   const country = typeof filters.pais === 'string' ? filters.pais : '';
   const state = typeof filters.estado === 'string' ? filters.estado : '';
   const stateView = showStates && states.features.length > 0;
@@ -118,10 +122,17 @@ export function AtlasMap({ filters, onCountry, onState }: AtlasMapProps) {
     setStates(EMPTY);
     Promise.all([
       fetchMap(query, 'pais', controller.signal),
-      country ? fetchMap(query, 'estado', controller.signal) : Promise.resolve(EMPTY),
+      country && mode === 'detalhado' ? fetchMap(query, 'estado', controller.signal) : Promise.resolve(EMPTY),
     ])
       .then(([countries, subdivisions]) => {
-        setWorld(countries);
+        setWorld(mode === 'global' ? { ...countries,
+          fonte: 'Fenabrave/JATO — totais nacionais anuais; geometria Natural Earth',
+          nota: 'Apenas totais anuais de automóveis e comerciais leves. Sem dados não significa zero.',
+          features: countries.features.map(feature => {
+            const total = feature.properties.iso ? totals.get(feature.properties.iso) : undefined;
+            return { ...feature, properties: { ...feature.properties, unidades: total ?? null, tem_dados: total !== undefined } };
+          })
+        } : countries);
         setStates(subdivisions);
       })
       .catch((reason: unknown) => {
@@ -133,7 +144,7 @@ export function AtlasMap({ filters, onCountry, onState }: AtlasMapProps) {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [query, country]);
+  }, [query, country, mode, totals]);
 
   useEffect(() => {
     if (!container.current) return;
@@ -348,7 +359,7 @@ export function AtlasMap({ filters, onCountry, onState }: AtlasMapProps) {
           : error ||
             (webglError
               ? 'Mapa visual indisponível. Use a lista de territórios abaixo.'
-              : hover || 'Registros por território')}
+              : hover || (mode === 'global' ? 'Totais nacionais de automóveis e comerciais leves' : 'Registros por território'))}
       </div>
       <div className="border-t border-white/10 px-4 py-3 text-xs text-white/50">
         <p>{visible.fonte || 'Natural Earth · domínio público · geometrias servidas pelo banco'}</p>

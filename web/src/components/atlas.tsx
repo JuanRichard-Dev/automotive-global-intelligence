@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
@@ -278,11 +278,23 @@ function Dashboard({ initial }: { initial: Initial }) {
     .flatMap((d) => d.anos);
   const monthlyRows = (initial.fenabrave_mensal || [])
     .filter((row) => f.pais === 'BR' && row.ano === f.ano);
+  const lastMonthly = monthlyRows.length ? monthlyRows[monthlyRows.length - 1] : null;
+  const monthlyPartial = f.pais === 'BR' && monthlyRows.length > 0;
   const globalRows = (initial.globais || [])
     .filter((row) => row.iso === f.pais)
     .sort((a, b) => a.ano - b.ano);
   const selectedGlobal = globalRows.find((row) => row.ano === f.ano);
-  const hasDetailedRecords = initial.paises.some((row) => row.iso === f.pais && row.tem_real);
+  const hasDetailedRecords = initial.disponibilidade.some(
+    d => d.iso === f.pais && d.origem === f.origem &&
+      d.periodicidade === 'anual' && d.anos.includes(f.ano),
+  );
+  const showDetailed = hasDetailedRecords;
+  const previousGlobal = globalRows.find(row => row.ano === f.ano - 1);
+  const globalPeers = useMemo(() => (initial.globais || [])
+    .filter(row => row.ano === f.ano).sort((a,b) => b.unidades - a.unidades),
+    [initial.globais, f.ano]);
+  const mapGlobalTotals = useMemo(() => globalPeers.map(row =>
+    ({ iso: row.iso, unidades: row.unidades })), [globalPeers]);
   const availableMonthlyYears = f.pais === 'BR'
     ? (initial.fenabrave_mensal || []).map((r) => r.ano)
     : [];
@@ -336,7 +348,7 @@ function Dashboard({ initial }: { initial: Initial }) {
           <a href="#explorar" onClick={() => setMenu(false)}>
             Explorar
           </a>
-          <a href="#ranking" onClick={() => setMenu(false)}>
+          <a href={showDetailed ? '#ranking' : '#explorar'} onClick={() => setMenu(false)}>
             Rankings
           </a>
           <a href="#analise" onClick={() => setMenu(false)}>
@@ -406,7 +418,7 @@ function Dashboard({ initial }: { initial: Initial }) {
             </div>
           </div>
           <div className="hero-feature">
-            <span className="eyebrow">MAIS REGISTRADO · {f.ano}</span>
+            <span className="eyebrow">{showDetailed ? 'MAIS REGISTRADO' : 'MERCADO NACIONAL'} · {f.ano}</span>
             <h2>{leader ? `${leader.marca} ${leader.modelo}` : 'Sem registro neste período'}</h2>
             {p?.midia_carro && (
               <div className="car-photo">
@@ -422,13 +434,13 @@ function Dashboard({ initial }: { initial: Initial }) {
             <div className="leader-figures">
               <div>
                 <strong>
-                  <Count value={leader?.unidades ?? null} />
+                  <Count value={leader?.unidades ?? selectedGlobal?.unidades ?? lastMonthly?.acumulado ?? null} />
                 </strong>
-                <span>{p?.medida.nome || 'Unidades observadas'}</span>
+                <span>{!showDetailed && selectedGlobal ? 'Automóveis e comerciais leves · Fenabrave/JATO' : !showDetailed && monthlyPartial ? 'Automóveis e comerciais leves · Fenabrave mensal' : p?.medida.nome || 'Unidades observadas'}</span>
               </div>
               <div>
-                <strong>{pct(leader?.participacao_pct ?? null)}</strong>
-                <span>de participação</span>
+                <strong>{!showDetailed && selectedGlobal && previousGlobal ? `${(((selectedGlobal.unidades / previousGlobal.unidades)-1)*100).toLocaleString('pt-BR', {maximumFractionDigits:1})}%` : pct(leader?.participacao_pct ?? null)}</strong>
+                <span>{!showDetailed && selectedGlobal ? 'variação anual' : 'de participação'}</span>
               </div>
             </div>
             <Credit media={p?.midia_carro || null} />
@@ -504,9 +516,13 @@ function Dashboard({ initial }: { initial: Initial }) {
           </div>
             {!hasDetailedRecords && (
               <p className="country-coverage-note" role="status">
-                {globalRows.length
-                  ? 'Este país possui totais anuais nacionais verificados, mas não há ranking por marca e modelo publicado nesta base. Veja o panorama anual abaixo.'
-                  : 'Este país está cadastrado no atlas, mas ainda não possui registros automotivos reais nesta base. Rankings e indicadores ficarão indisponíveis até que exista uma fonte compatível.'}
+                {selectedGlobal
+                  ? 'Totais nacionais anuais verificados: o panorama internacional aparece abaixo. Rankings por modelo requerem outra fonte.'
+                  : monthlyPartial
+                    ? 'Há emplacamentos mensais oficiais para este ano. O ano pode estar incompleto; consulte a tabela por mês abaixo.'
+                    : globalRows.length
+                      ? 'Este ano não possui total anual publicado nesta base. Escolha um ano com dados disponíveis.'
+                      : 'Este país não possui registros automotivos nesta base para o período selecionado.'}
               </p>
             )}
           <div aria-live="polite">
@@ -519,52 +535,8 @@ function Dashboard({ initial }: { initial: Initial }) {
               </div>
             ) : null}
           </div>
-          <div className="overview">
-            <div className="map-panel">
-              <div className="panel-label">
-                <Globe2 size={16} /> GEOGRAFIA DO MERCADO{' '}
-                <span>{f.estado ? 'ESCALA ESTADUAL' : 'ESCALA GLOBAL'}</span>
-              </div>
-              <AtlasMap
-                filters={f}
-                onCountry={selectCountry}
-                onState={(v) => update({ estado: v })}
-              />
-            </div>
-            <aside className="market-summary">
-              <span className="eyebrow">MERCADO EM FOCO</span>
-              <h3>{p?.estado?.nome || p?.pais.nome || f.pais}</h3>
-              <span className="subtle">
-                {f.ano} · {p?.medida.nome}
-              </span>
-              <div className="big-stat">
-                <Count value={p?.ranking.unidades_observadas ?? null} />
-                <span>unidades registradas</span>
-              </div>
-              <dl>
-                <div>
-                  <dt>Modelos</dt>
-                  <dd>
-                    {num(
-                      p?.ranking.items.length
-                        ? p.ranking.items[0] && p.estatisticas?.descritiva.modelos
-                        : undefined,
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Total do mercado</dt>
-                  <dd>{num(p?.ranking.mercado_elegivel)}</dd>
-                </div>
-                <div>
-                  <dt>Cobertura da base</dt>
-                  <dd>{pct(p?.ranking.cobertura_pct ?? null)}</dd>
-                </div>
-              </dl>
-            </aside>
-          </div>
-        </section>
-        {globalRows.length > 0 && (
+          {!showDetailed && selectedGlobal && (
+            <div className="global-priority">{globalRows.length > 0 && (
           <section className="section global-section" aria-labelledby="global-data-title">
             <div className="section-heading">
               <div>
@@ -595,6 +567,28 @@ function Dashboard({ initial }: { initial: Initial }) {
                   );
                 })}
               </div>
+              <div className="global-market-summary-grid">
+                <div><span>Total em {f.ano}</span><strong>{num(selectedGlobal?.unidades)}</strong></div>
+                <div><span>Variação frente ao ano anterior</span>
+                  <strong>{previousGlobal && selectedGlobal
+                    ? `${selectedGlobal.unidades >= previousGlobal.unidades ? '+' : ''}${(((selectedGlobal.unidades / previousGlobal.unidades)-1)*100).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`
+                    : '—'}</strong></div>
+                <div><span>Mercados com total publicado</span><strong>{globalPeers.length}</strong></div>
+              </div>
+              <div className="global-comparison">
+                <h3>Comparativo internacional · {f.ano}</h3>
+                <p>Totais nacionais anuais comparáveis da mesma fonte e categoria.</p>
+                <div className="global-comparison-list">
+                  {globalPeers.slice(0,12).map((country,index) => (
+                    <button type="button" key={country.iso}
+                      className={country.iso === f.pais ? 'global-peer selected' : 'global-peer'}
+                      onClick={() => selectCountry(country.iso)}>
+                      <span>{index+1}. {initial.paises.find(p => p.iso === country.iso)?.nome || country.pais}</span>
+                      <strong>{num(country.unidades)}</strong>
+                    </button>
+                  ))}
+                </div>
+              </div>
               <p className="global-market-source">
                 Fonte: <a href={globalRows[0].fonte_url} target="_blank" rel="noreferrer">
                   Fenabrave — Anuário 2025, ranking internacional (dados JATO)
@@ -602,7 +596,55 @@ function Dashboard({ initial }: { initial: Initial }) {
               </p>
             </div>
           </section>
-        )}
+        )}</div>
+          )}
+          <div className="overview">
+            <div className="map-panel">
+              <div className="panel-label">
+                <Globe2 size={16} /> GEOGRAFIA DO MERCADO{' '}
+                <span>{f.estado ? 'ESCALA ESTADUAL' : 'ESCALA GLOBAL'}</span>
+              </div>
+              <AtlasMap
+                filters={f}
+                mode={!showDetailed && selectedGlobal ? 'global' : 'detalhado'}
+                globalTotals={mapGlobalTotals}
+                onCountry={selectCountry}
+                onState={(v) => update({ estado: v })}
+              />
+            </div>
+            <aside className="market-summary">
+              <span className="eyebrow">MERCADO EM FOCO</span>
+              <h3>{p?.estado?.nome || p?.pais.nome || f.pais}</h3>
+              <span className="subtle">
+                {f.ano} · {!showDetailed && selectedGlobal ? 'Automóveis e comerciais leves (total anual)' : !showDetailed && monthlyPartial ? 'Emplacamentos (acumulado parcial)' : p?.medida.nome}
+              </span>
+              <div className="big-stat">
+                <Count value={showDetailed ? (p?.ranking.unidades_observadas ?? null) : (selectedGlobal?.unidades ?? lastMonthly?.acumulado ?? null)} />
+                <span>{!showDetailed && selectedGlobal ? 'total nacional anual' : !showDetailed && monthlyPartial ? 'acumulado até o último mês disponível' : 'unidades registradas'}</span>
+              </div>
+              <dl>
+                <div>
+                  <dt>{showDetailed ? 'Modelos' : monthlyPartial && !selectedGlobal ? 'Último mês' : 'Fonte'}</dt>
+                  <dd>
+                    {num(
+                      p?.ranking.items.length
+                        ? p.ranking.items[0] && p.estatisticas?.descritiva.modelos
+                        : undefined,
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{showDetailed ? 'Total do mercado' : monthlyPartial && !selectedGlobal ? 'Meses publicados' : 'Anos disponíveis'}</dt>
+                  <dd>{showDetailed ? num(p?.ranking.mercado_elegivel) : monthlyPartial && !selectedGlobal ? `${monthlyRows.length} de 12` : globalRows.length ? `${globalRows[0].ano}–${globalRows[globalRows.length-1].ano}` : '—'}</dd>
+                </div>
+                <div>
+                  <dt>{showDetailed ? 'Cobertura da base' : monthlyPartial && !selectedGlobal ? 'Fonte' : 'Variação anual'}</dt>
+                  <dd>{showDetailed ? pct(p?.ranking.cobertura_pct ?? null) : monthlyPartial && !selectedGlobal ? 'Fenabrave' : selectedGlobal && previousGlobal ? `${(((selectedGlobal.unidades / previousGlobal.unidades)-1)*100).toLocaleString('pt-BR', {maximumFractionDigits:1})}%` : '—'}</dd>
+                </div>
+              </dl>
+            </aside>
+          </div>
+        </section>
         {f.pais === 'BR' && monthlyRows.length > 0 && (
           <section className="section" aria-label="Emplacamentos mensais Fenabrave">
             <div className="section-heading">
@@ -636,7 +678,7 @@ function Dashboard({ initial }: { initial: Initial }) {
             </div>
           </section>
         )}
-        <section id="ranking" className="section ranking-section">
+        {showDetailed && <section id="ranking" className="section ranking-section">
           <div className="section-heading">
             <div>
               <span className="eyebrow">02 / RANKING</span>
@@ -778,8 +820,8 @@ function Dashboard({ initial }: { initial: Initial }) {
               <Chart kind="ranking" items={rank} />
             </div>
           </div>
-        </section>
-        <section id="analise" className="section">
+        </section>}
+        {showDetailed && <section id="analise" className="section">
           <div className="section-heading">
             <div>
               <span className="eyebrow">03 / HISTÓRICO</span>
@@ -854,7 +896,7 @@ function Dashboard({ initial }: { initial: Initial }) {
               <strong>{num(p?.estatisticas?.descritiva.hhi)}</strong>
             </div>
           </div>
-        </section>
+        </section>}
       </main>
     </>
   );

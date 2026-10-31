@@ -1326,3 +1326,82 @@ footer > a:last-child {
     margin-bottom: 15px;
   }
 }
+
+/* Market filters: compact searchable country list and honest period availability */
+.country-filter { position: relative; }
+.country-filter > .filter-label { font-size: 8px; letter-spacing: 1.5px; color: #929a9e; }
+.country-filter .country-trigger { color: inherit; cursor: pointer; }
+.country-filter .country-trigger:focus-visible,
+.filter-trigger:focus-visible { outline: 2px solid #d1b98d; outline-offset: 4px; }
+.filter-trigger:disabled { color: #8c9294; cursor: not-allowed; opacity: .8; }
+.country-menu {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 5px);
+  left: 0;
+  width: min(360px, calc(100vw - 32px));
+  background: #1b2023;
+  border: 1px solid #66635b;
+  box-shadow: 0 18px 45px #000b;
+  color: #eee;
+  text-align: left;
+}
+.country-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px;
+  border-bottom: 1px solid #ffffff21;
+  color: #d1b98d;
+}
+.country-search input {
+  background: #101517;
+  color: #f4f1ea;
+  border: 1px solid #77776c;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+  font-size: 13px;
+  outline-offset: 2px;
+}
+.country-search input:focus { outline: 2px solid #d1b98d; }
+.country-options {
+  max-height: 300px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.country-group-label {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 9px 14px;
+  background: #303437;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #cfbd9b;
+}
+.country-filter .country-option {
+  padding: 11px 14px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  font-size: 13px;
+  gap: 10px;
+  border-bottom: 1px solid #ffffff0e;
+  cursor: pointer;
+}
+.country-option small { color: #aeb5b8; font-size: 10px; flex-shrink: 0; }
+.country-option[data-active="true"],
+.country-option:hover { background: #c6aa7b27; color: #fff; }
+.country-option[aria-selected="true"] { color: #e5cd9a; }
+.country-empty { padding: 14px; color: #abb3b5; font-size: 12px; }
+.country-menu-footer { margin: 0; padding: 9px 13px; border-top: 1px solid #ffffff21; color: #aeb5b8; font-size: 10px; }
+.select-content { max-height: min(320px, 60vh); }
+.select-item[data-highlighted] { background: #c6aa7b28; color: #f7ebd1; }
+@media (max-width: 600px) {
+  .country-menu { position: fixed; top: 18vh; left: 16px; width: calc(100vw - 32px); max-height: 70vh; }
+  .country-options { max-height: 44vh; }
+}

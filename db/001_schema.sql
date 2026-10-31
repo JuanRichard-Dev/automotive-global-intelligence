@@ -91,3 +91,17 @@ BEGIN
   IF p_ano < 1900 OR p_ano > 2100 THEN RAISE EXCEPTION 'Ano fora do contrato'; END IF;
   EXECUTE format('CREATE TABLE IF NOT EXISTS %I PARTITION OF fato_vendas FOR VALUES FROM (%s) TO (%s)', 'fato_vendas_'||p_ano,p_ano,p_ano+1);
 END $$;
+
+-- Totais anuais internacionais Fenabrave/JATO: distintos de registros por modelo.
+CREATE TABLE IF NOT EXISTS atlas_global_annual (
+  pais_iso char(2) NOT NULL REFERENCES dim_pais(iso),
+  ano smallint NOT NULL CHECK (ano BETWEEN 2000 AND 2100),
+  unidades bigint NOT NULL CHECK (unidades>=0),
+  medida text NOT NULL DEFAULT 'automoveis_e_comerciais_leves',
+  fonte text NOT NULL,
+  fonte_url text NOT NULL,
+  nota text NOT NULL,
+  PRIMARY KEY (pais_iso, ano, medida)
+);
+ALTER TABLE atlas_global_annual ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON atlas_global_annual FROM anon, authenticated;

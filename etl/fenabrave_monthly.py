@@ -36,7 +36,10 @@ def parse_pdf(blob: bytes, year: int, month: int):
     for page in range(min(2, len(doc))):
         txt = doc[page].get_text("text", sort=True)
         # The year and month must both match a page's report heading.
-        if str(year) not in txt:
+        months = ("janeiro","fevereiro","março","abril","maio","junho",
+                  "julho","agosto","setembro","outubro","novembro","dezembro")
+        # Reject mislabelled/misdated PDF files, even if the URL looks correct.
+        if str(year) not in txt or months[month - 1] not in txt.lower():
             continue
         rows = {}
         for name, pattern in ROW.items():

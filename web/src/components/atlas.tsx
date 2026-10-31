@@ -7,6 +7,7 @@ import { create } from 'zustand';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, ArrowDown, Globe2, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
 import { FilterSelect } from './select';
+import { CountrySelect } from './country-select';
 const AtlasMap = dynamic(() => import('./atlas-map'), {
   ssr: false,
   loading: () => <div className="skeleton map-loading" />,
@@ -431,14 +432,13 @@ function Dashboard({ initial }: { initial: Initial }) {
             </p>
           </div>
           <div className="filters">
-            <FilterSelect
-              label="País"
+            <CountrySelect
               value={f.pais}
               onChange={selectCountry}
               items={initial.paises
                 .map((x) => ({
                   value: x.iso,
-                  label: `${x.iso === 'CN' ? 'China' : x.nome}${x.tem_real ? '' : ' · Sem registros'}`,
+                  label: x.iso === 'CN' ? 'China' : x.nome,
                   available: x.tem_real,
                 }))
                 .sort((a, b) =>
@@ -459,9 +459,11 @@ function Dashboard({ initial }: { initial: Initial }) {
             )}
             <FilterSelect
               label="Ano"
-              value={String(f.ano)}
+              value={years.length ? String(f.ano) : ''}
+              disabled={years.length === 0}
+              placeholder="Sem períodos"
               onChange={(v) => update({ ano: Number(v) })}
-              items={(years.length ? years : [f.ano]).map((y) => ({
+              items={years.map((y) => ({
                 value: String(y),
                 label: String(y),
               }))}

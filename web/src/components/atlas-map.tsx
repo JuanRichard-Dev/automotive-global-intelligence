@@ -11,6 +11,7 @@ export interface AtlasMapProps {
   onCountry: (iso: string) => void;
   onState: (code: string) => void;
   mode?: 'detalhado' | 'global';
+  globalTotals?: { iso: string; unidades: number }[];
 }
 
 type AtlasGeometry =
@@ -85,7 +86,7 @@ function boundsOf(features: Territory[]): [number, number, number, number] | nul
   return Number.isFinite(west) ? [west, south, east, north] : null;
 }
 
-export function AtlasMap({ filters, onCountry, onState, mode = 'detalhado' }: AtlasMapProps) {
+export function AtlasMap({ filters, onCountry, onState, mode = 'detalhado', globalTotals = [] }: AtlasMapProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LibreMap | null>(null);
   const handlers = useRef({ onCountry, onState });
@@ -98,6 +99,7 @@ export function AtlasMap({ filters, onCountry, onState, mode = 'detalhado' }: At
   const [showStates, setShowStates] = useState(true);
   const [hover, setHover] = useState<string | null>(null);
   const query = useMemo(() => queryFor(filters, mode), [filters, mode]);
+  const totals = useMemo(() => new Map(globalTotals.map(x => [x.iso, x.unidades])), [globalTotals]);
   const country = typeof filters.pais === 'string' ? filters.pais : '';
   const state = typeof filters.estado === 'string' ? filters.estado : '';
   const stateView = showStates && states.features.length > 0;
@@ -123,7 +125,14 @@ export function AtlasMap({ filters, onCountry, onState, mode = 'detalhado' }: At
       country && mode === 'detalhado' ? fetchMap(query, 'estado', controller.signal) : Promise.resolve(EMPTY),
     ])
       .then(([countries, subdivisions]) => {
-        setWorld(countries);
+        setWorld(mode === 'global' ? { ...countries,
+          fonte: 'Fenabrave/JATO — totais nacionais anuais; geometria Natural Earth',
+          nota: 'Apenas totais anuais de automóveis e comerciais leves. Sem dados não significa zero.',
+          features: countries.features.map(feature => {
+            const total = feature.properties.iso ? totals.get(feature.properties.iso) : undefined;
+            return { ...feature, properties: { ...feature.properties, unidades: total ?? null, tem_dados: total !== undefined } };
+          })
+        } : countries);
         setStates(subdivisions);
       })
       .catch((reason: unknown) => {
@@ -135,7 +144,7 @@ export function AtlasMap({ filters, onCountry, onState, mode = 'detalhado' }: At
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [query, country]);
+  }, [query, country, mode, totals]);
 
   useEffect(() => {
     if (!container.current) return;

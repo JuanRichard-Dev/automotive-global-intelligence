@@ -282,7 +282,14 @@ function Dashboard({ initial }: { initial: Initial }) {
     .filter((row) => row.iso === f.pais)
     .sort((a, b) => a.ano - b.ano);
   const selectedGlobal = globalRows.find((row) => row.ano === f.ano);
-  const hasDetailedRecords = initial.paises.some((row) => row.iso === f.pais && row.tem_real);
+  const hasDetailedRecords = initial.disponibilidade.some(
+    d => d.iso === f.pais && d.origem === f.origem &&
+      d.periodicidade === 'anual' && d.anos.includes(f.ano),
+  );
+  const showDetailed = hasDetailedRecords;
+  const previousGlobal = globalRows.find(row => row.ano === f.ano - 1);
+  const globalPeers = (initial.globais || []).filter(row => row.ano === f.ano)
+    .sort((a,b) => b.unidades - a.unidades);
   const availableMonthlyYears = f.pais === 'BR'
     ? (initial.fenabrave_mensal || []).map((r) => r.ano)
     : [];
@@ -336,7 +343,7 @@ function Dashboard({ initial }: { initial: Initial }) {
           <a href="#explorar" onClick={() => setMenu(false)}>
             Explorar
           </a>
-          <a href="#ranking" onClick={() => setMenu(false)}>
+          <a href={showDetailed ? '#ranking' : '#explorar'} onClick={() => setMenu(false)}>
             Rankings
           </a>
           <a href="#analise" onClick={() => setMenu(false)}>
@@ -406,7 +413,7 @@ function Dashboard({ initial }: { initial: Initial }) {
             </div>
           </div>
           <div className="hero-feature">
-            <span className="eyebrow">MAIS REGISTRADO · {f.ano}</span>
+            <span className="eyebrow">{showDetailed ? 'MAIS REGISTRADO' : 'MERCADO NACIONAL'} · {f.ano}</span>
             <h2>{leader ? `${leader.marca} ${leader.modelo}` : 'Sem registro neste período'}</h2>
             {p?.midia_carro && (
               <div className="car-photo">
@@ -422,13 +429,13 @@ function Dashboard({ initial }: { initial: Initial }) {
             <div className="leader-figures">
               <div>
                 <strong>
-                  <Count value={leader?.unidades ?? null} />
+                  <Count value={leader?.unidades ?? selectedGlobal?.unidades ?? null} />
                 </strong>
-                <span>{p?.medida.nome || 'Unidades observadas'}</span>
+                <span>{selectedGlobal && !showDetailed ? 'Automóveis e comerciais leves · Fenabrave/JATO' : p?.medida.nome || 'Unidades observadas'}</span>
               </div>
               <div>
-                <strong>{pct(leader?.participacao_pct ?? null)}</strong>
-                <span>de participação</span>
+                <strong>{!showDetailed && selectedGlobal && previousGlobal ? `${(((selectedGlobal.unidades / previousGlobal.unidades)-1)*100).toLocaleString('pt-BR', {maximumFractionDigits:1})}%` : pct(leader?.participacao_pct ?? null)}</strong>
+                <span>{!showDetailed && selectedGlobal ? 'variação anual' : 'de participação'}</span>
               </div>
             </div>
             <Credit media={p?.midia_carro || null} />
@@ -505,7 +512,7 @@ function Dashboard({ initial }: { initial: Initial }) {
             {!hasDetailedRecords && (
               <p className="country-coverage-note" role="status">
                 {globalRows.length
-                  ? 'Este país possui totais anuais nacionais verificados, mas não há ranking por marca e modelo publicado nesta base. Veja o panorama anual abaixo.'
+                  ? 'Este mercado possui totais nacionais anuais verificáveis. O panorama e as comparações são exibidos abaixo; rankings por modelo requerem outra fonte.'
                   : 'Este país está cadastrado no atlas, mas ainda não possui registros automotivos reais nesta base. Rankings e indicadores ficarão indisponíveis até que exista uma fonte compatível.'}
               </p>
             )}
@@ -519,6 +526,9 @@ function Dashboard({ initial }: { initial: Initial }) {
               </div>
             ) : null}
           </div>
+          {!showDetailed && globalRows.length > 0 && (
+            <div className="global-priority">{section.trim()}</div>
+          )}
           <div className="overview">
             <div className="map-panel">
               <div className="panel-label">
@@ -527,6 +537,8 @@ function Dashboard({ initial }: { initial: Initial }) {
               </div>
               <AtlasMap
                 filters={f}
+                mode={!showDetailed && globalRows.length ? 'global' : 'detalhado'}
+                globalTotals={globalPeers.map(row => ({iso:row.iso,unidades:row.unidades}))}
                 onCountry={selectCountry}
                 onState={(v) => update({ estado: v })}
               />
@@ -535,15 +547,15 @@ function Dashboard({ initial }: { initial: Initial }) {
               <span className="eyebrow">MERCADO EM FOCO</span>
               <h3>{p?.estado?.nome || p?.pais.nome || f.pais}</h3>
               <span className="subtle">
-                {f.ano} · {p?.medida.nome}
+                {f.ano} · {!showDetailed && selectedGlobal ? 'Automóveis e comerciais leves (total anual)' : p?.medida.nome}
               </span>
               <div className="big-stat">
-                <Count value={p?.ranking.unidades_observadas ?? null} />
-                <span>unidades registradas</span>
+                <Count value={showDetailed ? (p?.ranking.unidades_observadas ?? null) : (selectedGlobal?.unidades ?? null)} />
+                <span>{!showDetailed && selectedGlobal ? 'total nacional publicado' : 'unidades registradas'}</span>
               </div>
               <dl>
                 <div>
-                  <dt>Modelos</dt>
+                  <dt>{showDetailed ? 'Modelos' : 'Fonte'}</dt>
                   <dd>
                     {num(
                       p?.ranking.items.length
@@ -553,56 +565,17 @@ function Dashboard({ initial }: { initial: Initial }) {
                   </dd>
                 </div>
                 <div>
-                  <dt>Total do mercado</dt>
-                  <dd>{num(p?.ranking.mercado_elegivel)}</dd>
+                  <dt>{showDetailed ? 'Total do mercado' : 'Anos disponíveis'}</dt>
+                  <dd>{showDetailed ? num(p?.ranking.mercado_elegivel) : globalRows.length ? `${globalRows[0].ano}–${globalRows[globalRows.length-1].ano}` : '—'}</dd>
                 </div>
                 <div>
-                  <dt>Cobertura da base</dt>
-                  <dd>{pct(p?.ranking.cobertura_pct ?? null)}</dd>
+                  <dt>{showDetailed ? 'Cobertura da base' : 'Variação anual'}</dt>
+                  <dd>{showDetailed ? pct(p?.ranking.cobertura_pct ?? null) : selectedGlobal && previousGlobal ? `${(((selectedGlobal.unidades / previousGlobal.unidades)-1)*100).toLocaleString('pt-BR', {maximumFractionDigits:1})}%` : '—'}</dd>
                 </div>
               </dl>
             </aside>
           </div>
         </section>
-        {globalRows.length > 0 && (
-          <section className="section global-section" aria-labelledby="global-data-title">
-            <div className="section-heading">
-              <div>
-                <span className="eyebrow">PANORAMA INTERNACIONAL · FENABRAVE / JATO</span>
-                <h2 id="global-data-title">Mercado nacional <em>2020–2025.</em></h2>
-              </div>
-              <p>Automóveis e comerciais leves · totais nacionais anuais.<br />
-                Estes totais não representam rankings de marcas ou modelos.</p>
-            </div>
-            <div className="global-market-panel">
-              <div className="global-market-heading">
-                <span>Total nacional · {f.ano}</span>
-                <strong>{selectedGlobal ? num(selectedGlobal.unidades) : 'Ano não disponível'}</strong>
-              </div>
-              <div className="global-market-bars" role="img"
-                aria-label={`Totais anuais de automóveis e comerciais leves de ${f.pais}`}>
-                {globalRows.map((row) => {
-                  const peak = Math.max(...globalRows.map((item) => item.unidades), 1);
-                  const percent = (row.unidades / peak) * 100;
-                  return (
-                    <button type="button" key={row.ano}
-                      className={row.ano === f.ano ? 'global-market-year selected' : 'global-market-year'}
-                      onClick={() => update({ ano: row.ano, periodicidade: 'anual', mes: null })}>
-                      <span className="global-market-value">{num(row.unidades)}</span>
-                      <span className="global-market-track"><span style={{ height: `${percent}%` }} /></span>
-                      <span className="global-market-label">{row.ano}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="global-market-source">
-                Fonte: <a href={globalRows[0].fonte_url} target="_blank" rel="noreferrer">
-                  Fenabrave — Anuário 2025, ranking internacional (dados JATO)
-                </a>. Total de automóveis e comerciais leves por ano. Não somar estes valores aos rankings de modelos.
-              </p>
-            </div>
-          </section>
-        )}
         {f.pais === 'BR' && monthlyRows.length > 0 && (
           <section className="section" aria-label="Emplacamentos mensais Fenabrave">
             <div className="section-heading">
@@ -636,7 +609,7 @@ function Dashboard({ initial }: { initial: Initial }) {
             </div>
           </section>
         )}
-        <section id="ranking" className="section ranking-section">
+        {showDetailed && <section id="ranking" className="section ranking-section">
           <div className="section-heading">
             <div>
               <span className="eyebrow">02 / RANKING</span>
@@ -778,8 +751,8 @@ function Dashboard({ initial }: { initial: Initial }) {
               <Chart kind="ranking" items={rank} />
             </div>
           </div>
-        </section>
-        <section id="analise" className="section">
+        </section>}
+        {showDetailed && <section id="analise" className="section">
           <div className="section-heading">
             <div>
               <span className="eyebrow">03 / HISTÓRICO</span>
@@ -854,7 +827,7 @@ function Dashboard({ initial }: { initial: Initial }) {
               <strong>{num(p?.estatisticas?.descritiva.hhi)}</strong>
             </div>
           </div>
-        </section>
+        </section>}
       </main>
     </>
   );

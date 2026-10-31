@@ -12,8 +12,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 WORKDIR /app
-COPY requirements.txt ./requirements.txt
-RUN python -m pip install --no-cache-dir -r requirements.txt
+COPY requirements-etl.txt ./requirements-etl.txt
+RUN python -m pip install --no-cache-dir -r requirements-etl.txt
 COPY etl ./etl
 COPY db ./db
 COPY data/raw ./data/raw

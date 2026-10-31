@@ -6,22 +6,26 @@ export function FilterSelect({
   value,
   items,
   onChange,
+  disabled = false,
+  placeholder = 'Selecione',
 }: {
   label: string;
   value: string;
   items: { value: string; label: string }[];
   onChange: (v: string) => void;
+  disabled?: boolean;
+  placeholder?: string;
 }) {
   return (
     <label className="filter">
       <span>{label}</span>
-      <Select.Root value={value} onValueChange={onChange}>
-        <Select.Trigger aria-label={label}>
-          <Select.Value />
+      <Select.Root value={value} onValueChange={onChange} disabled={disabled}>
+        <Select.Trigger aria-label={label} className="filter-trigger" disabled={disabled}>
+          <Select.Value placeholder={placeholder} />
           <ChevronDown size={14} />
         </Select.Trigger>
         <Select.Portal>
-          <Select.Content className="select-content" position="popper" sideOffset={8}>
+          <Select.Content className="select-content" position="popper" sideOffset={8} collisionPadding={12}>
             <Select.Viewport>
               {items.map((i) => (
                 <Select.Item key={i.value} value={i.value} className="select-item">

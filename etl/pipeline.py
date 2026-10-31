@@ -28,7 +28,7 @@ def session():
 
 def input_manifest():
     """Hash dos arquivos de evidência e das regras que determinam a carga."""
-    paths=[DATA/'raw/real_sales.csv',DATA/'raw/market_totals.csv']
+    paths=[DATA/'raw/real_sales.csv',DATA/'raw/market_totals.csv',DATA/'seed/fenabrave_global_2020_2025.csv']
     paths += [DATA/'seed'/name for name in ('sources.json','media.json','fx.json','world.geojson','states-br-us.geojson')]
     paths += [ROOT/name for name in ('etl/pipeline.py','etl/transforms.py','etl/aggregations.py','etl/bootstrap.py','db/001_schema.sql','db/002_seed.sql','db/003_views.sql')]
     files={str(p.relative_to(ROOT)).replace('\\','/'):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
@@ -37,6 +37,28 @@ def input_manifest():
         real_rows=sum(1 for _ in csv.DictReader(stream))
     if not real_rows:raise ValueError('A entrada real está vazia; nenhuma carga foi iniciada')
     return fingerprint,files,real_rows
+
+def load_global_totals(conn):
+    """Load audited Fenabrave/JATO annual national totals, not model rankings."""
+    path=DATA/'seed/fenabrave_global_2020_2025.csv'
+    with path.open(encoding='utf-8',newline='') as stream:
+        records=list(csv.DictReader(stream))
+    if len(records)!=132 or len({(r['pais_iso'],r['ano']) for r in records})!=132:
+        raise ValueError('Invalid Fenabrave global annual coverage: expected 22 countries x 6 years')
+    params=[(r['pais_iso'],int(r['ano']),int(r['unidades']),
+        'automoveis_e_comerciais_leves',
+        'Fenabrave Anuário 2025 — Ranking internacional (fonte JATO)',
+        'https://www.fenabrave.org.br/anuarios/Anuario2025.pdf',
+        'Totais nacionais anuais; não representam ranking por modelo nem série mensal')
+        for r in records]
+    with conn.cursor() as cur:
+        cur.executemany("""
+          INSERT INTO atlas_global_annual(pais_iso,ano,unidades,medida,fonte,fonte_url,nota)
+          VALUES (%s,%s,%s,%s,%s,%s,%s)
+          ON CONFLICT(pais_iso,ano,medida) DO UPDATE SET
+            unidades=excluded.unidades,fonte=excluded.fonte,
+            fonte_url=excluded.fonte_url,nota=excluded.nota
+        """,params)
 
 def run(rows=0,seed=0,force=False):
     # Parâmetros legados permanecem aceitos apenas no modo sem geração.
@@ -52,6 +74,7 @@ def run(rows=0,seed=0,force=False):
             print('Carga real já concluída para os mesmos arquivos e regras. Use --force para reconstruir.');return
         conn.execute('INSERT INTO execucao_etl(id,iniciada_em,seed,linhas_sinteticas,status) VALUES (%s,%s,0,0,%s)',(run_id,started,'iniciada'))
         metadata(conn)
+        load_global_totals(conn)
     spark=session();spark.sparkContext.setLogLevel('WARN')
     report=dict(execucao=run_id,modo='real',fingerprint_entrada=fingerprint,arquivos_sha256=files,linhas_entrada_real=real_rows,iniciada_em=started.isoformat())
     try:

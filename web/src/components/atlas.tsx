@@ -103,6 +103,10 @@ type Initial = {
     origens: Record<string, unknown>;
   };
   paises: { iso: string; nome: string; tem_real: boolean }[];
+  globais: {
+    iso: string; pais: string; ano: number; unidades: number; medida: string;
+    fonte: string; fonte_url: string; nota: string;
+  }[];
   disponibilidade: {
     iso: string;
     origem: string;
@@ -206,9 +210,13 @@ function Dashboard({ initial }: { initial: Initial }) {
     const opt = initial.disponibilidade.find(
       (d) => d.iso === iso && d.origem === f.origem && d.periodicidade === 'anual',
     );
+    const validYears = [
+      ...(opt?.anos || []),
+      ...(initial.globais || []).filter((g) => g.iso === iso).map((g) => g.ano),
+    ];
     update({
       pais: iso,
-      ano: opt?.anos.includes(f.ano) ? f.ano : Math.max(...(opt?.anos || [f.ano])),
+      ano: validYears.includes(f.ano) ? f.ano : Math.max(...(validYears.length ? validYears : [f.ano])),
       estado: null,
       medida: opt?.medida || null,
       periodicidade: 'anual',
@@ -263,7 +271,12 @@ function Dashboard({ initial }: { initial: Initial }) {
   const yr = initial.disponibilidade
     .filter((d) => d.iso === f.pais && d.origem === f.origem && d.periodicidade === f.periodicidade)
     .flatMap((d) => d.anos);
-  const years = [...new Set(yr)].sort((a, b) => b - a);
+  const globalRows = (initial.globais || [])
+    .filter((row) => row.iso === f.pais)
+    .sort((a, b) => a.ano - b.ano);
+  const selectedGlobal = globalRows.find((row) => row.ano === f.ano);
+  const hasDetailedRecords = initial.paises.some((row) => row.iso === f.pais && row.tem_real);
+  const years = [...new Set([...yr, ...globalRows.map((row) => row.ano)])].sort((a, b) => b - a);
   useEffect(() => {
     if (reduced) return;
     let dispose = () => {};
@@ -439,7 +452,7 @@ function Dashboard({ initial }: { initial: Initial }) {
                 .map((x) => ({
                   value: x.iso,
                   label: x.iso === 'CN' ? 'China' : x.nome,
-                  available: x.tem_real,
+                  available: x.tem_real || (initial.globais || []).some((g) => g.iso === x.iso),
                 }))
                 .sort((a, b) =>
                   Number(b.available) - Number(a.available) ||
@@ -478,11 +491,11 @@ function Dashboard({ initial }: { initial: Initial }) {
               ]}
             />
           </div>
-            {!initial.paises.find((x) => x.iso === f.pais)?.tem_real && (
+            {!hasDetailedRecords && (
               <p className="country-coverage-note" role="status">
-                Este país está cadastrado no atlas, mas ainda não possui registros
-                automotivos reais na base. Rankings e indicadores ficarão
-                indisponíveis até que exista uma fonte compatível.
+                {globalRows.length
+                  ? 'Este país possui totais anuais nacionais verificados, mas não há ranking por marca e modelo publicado nesta base. Veja o panorama anual abaixo.'
+                  : 'Este país está cadastrado no atlas, mas ainda não possui registros automotivos reais nesta base. Rankings e indicadores ficarão indisponíveis até que exista uma fonte compatível.'}
               </p>
             )}
           <div aria-live="polite">
@@ -540,6 +553,45 @@ function Dashboard({ initial }: { initial: Initial }) {
             </aside>
           </div>
         </section>
+        {globalRows.length > 0 && (
+          <section className="section global-section" aria-labelledby="global-data-title">
+            <div className="section-heading">
+              <div>
+                <span className="eyebrow">PANORAMA INTERNACIONAL · FENABRAVE / JATO</span>
+                <h2 id="global-data-title">Mercado nacional <em>2020–2025.</em></h2>
+              </div>
+              <p>Automóveis e comerciais leves · totais nacionais anuais.<br />
+                Estes totais não representam rankings de marcas ou modelos.</p>
+            </div>
+            <div className="global-market-panel">
+              <div className="global-market-heading">
+                <span>Total nacional · {f.ano}</span>
+                <strong>{selectedGlobal ? num(selectedGlobal.unidades) : 'Ano não disponível'}</strong>
+              </div>
+              <div className="global-market-bars" role="img"
+                aria-label={`Totais anuais de automóveis e comerciais leves de ${f.pais}`}>
+                {globalRows.map((row) => {
+                  const peak = Math.max(...globalRows.map((item) => item.unidades), 1);
+                  const percent = (row.unidades / peak) * 100;
+                  return (
+                    <button type="button" key={row.ano}
+                      className={row.ano === f.ano ? 'global-market-year selected' : 'global-market-year'}
+                      onClick={() => update({ ano: row.ano, periodicidade: 'anual', mes: null })}>
+                      <span className="global-market-value">{num(row.unidades)}</span>
+                      <span className="global-market-track"><span style={{ height: `${percent}%` }} /></span>
+                      <span className="global-market-label">{row.ano}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="global-market-source">
+                Fonte: <a href={globalRows[0].fonte_url} target="_blank" rel="noreferrer">
+                  Fenabrave — Anuário 2025, ranking internacional (dados JATO)
+                </a>. Total de automóveis e comerciais leves por ano. Não somar estes valores aos rankings de modelos.
+              </p>
+            </div>
+          </section>
+        )}
         <section id="ranking" className="section ranking-section">
           <div className="section-heading">
             <div>
@@ -668,7 +720,7 @@ function Dashboard({ initial }: { initial: Initial }) {
                   ))}
                 </tbody>
               </table>
-              {!rank.length && <p className="empty">Sem registros neste período.</p>}
+              {!rank.length && <p className="empty">Ranking por modelo indisponível neste período.</p>}
               <p className="source-line">
                 Fonte:{' '}
                 {p?.fontes

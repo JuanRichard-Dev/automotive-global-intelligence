@@ -8,6 +8,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, ArrowDown, Globe2, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
 import { FilterSelect } from './select';
 import { CountrySelect } from './country-select';
+import LazySection from './lazy-section';
 const AtlasMap = dynamic(() => import('./atlas-map'), {
   ssr: false,
   loading: () => <div className="skeleton map-loading" />,
@@ -132,13 +133,13 @@ const nf = new Intl.NumberFormat('pt-BR');
 const num = (n: number | null | undefined) => (n == null ? '—' : nf.format(Math.round(n)));
 const pct = (n: number | null) =>
   n == null ? '—' : n.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%';
-async function get<T>(path: string, filters?: Filters): Promise<T> {
+async function get<T>(path: string, filters?: Filters, signal?: AbortSignal): Promise<T> {
   const q = new URLSearchParams();
   if (filters)
     Object.entries(filters).forEach(([k, v]) => {
       if (v !== null) q.set(k, String(v));
     });
-  const r = await fetch('/api/' + path + (path.includes('?') ? '&' : '?') + q);
+  const r = await fetch('/api/' + path + (path.includes('?') ? '&' : '?') + q, { signal });
   if (!r.ok) throw Error(`Consulta indisponível (${r.status})`);
   return r.json();
 }
@@ -182,7 +183,7 @@ function Count({ value }: { value: number | null }) {
   return <span ref={ref}>{num(value)}</span>;
 }
 export default function Atlas({ initial }: { initial: Initial }) {
-  const [client] = useState(() => new QueryClient());
+  const [client] = useState(() => new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1, gcTime: 600000 } } }));
   return (
     <QueryClientProvider client={client}>
       <Dashboard initial={initial} />
@@ -230,9 +231,34 @@ function Dashboard({ initial }: { initial: Initial }) {
       combustivel: null,
     });
   };
+  // Defer API requests for content that is well below the fold.
+  const [rankingNeeded, setRankingNeeded] = useState(false);
+  const [analysisNeeded, setAnalysisNeeded] = useState(false);
+  useEffect(() => {
+    const targets = [
+      document.getElementById('ranking'),
+      document.getElementById('analise'),
+    ].filter((node): node is HTMLElement => node instanceof HTMLElement);
+    if (!targets.length) return;
+    if (!('IntersectionObserver' in window)) {
+      if (targets.some(node => node.id === 'ranking')) setRankingNeeded(true);
+      if (targets.some(node => node.id === 'analise')) setAnalysisNeeded(true);
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        if (entry.target.id === 'ranking') setRankingNeeded(true);
+        if (entry.target.id === 'analise') setAnalysisNeeded(true);
+        observer.unobserve(entry.target);
+      }
+    }, { rootMargin: '750px 0px' });
+    targets.forEach(node => observer.observe(node));
+    return () => observer.disconnect();
+  }, [f.pais, f.ano]);
   const panel = useQuery({
     queryKey: ['panel', f],
-    queryFn: () => get<Panel>('painel', f),
+    queryFn: ({ signal }) => get<Panel>('painel', f, signal),
     initialData:
       JSON.stringify(f) === JSON.stringify(initial.config.padrao) ? initial.painel : undefined,
     staleTime: 60000,
@@ -244,7 +270,8 @@ function Dashboard({ initial }: { initial: Initial }) {
   });
   const comparison = useQuery({
     queryKey: ['compare', f],
-    queryFn: () =>
+    enabled: analysisNeeded,
+    queryFn: ({ signal }) =>
       get<{
         items: {
           iso: string;
@@ -255,23 +282,26 @@ function Dashboard({ initial }: { initial: Initial }) {
           lider: Rank | null;
         }[];
         nota: string;
-      }>('comparador', f),
+      }>('comparador', f, signal),
     staleTime: 60000,
   });
   const photos = useQuery({
     queryKey: ['photos'],
-    queryFn: () => get<{ items: (Media & { modelo_id: number | null })[] }>('midia'),
+    enabled: rankingNeeded,
+    queryFn: ({ signal }) => get<{ items: (Media & { modelo_id: number | null })[] }>('midia', undefined, signal),
     staleTime: Infinity,
   });
   const chartData = useQuery({
     queryKey: ['charts', f],
-    queryFn: () =>
-      get<{ ranking: Rank[]; fuels: { nome: string; unidades: number }[] }>('graficos', f),
+    enabled: analysisNeeded,
+    queryFn: ({ signal }) =>
+      get<{ ranking: Rank[]; fuels: { nome: string; unidades: number }[] }>('graficos', f, signal),
     staleTime: 60000,
   });
   const p = panel.data;
   const leader = p?.ranking.items[0];
   const photo = p?.midia_pais;
+  const photoByModel = useMemo(() => new Map((photos.data?.items || []).map(item => [item.modelo_id, item])), [photos.data]);
   const rank = p?.ranking.items || [];
   const yr = initial.disponibilidade
     .filter((d) => d.iso === f.pais && d.origem === f.origem && d.periodicidade === f.periodicidade)
@@ -304,6 +334,7 @@ function Dashboard({ initial }: { initial: Initial }) {
     if (reduced) return;
     let dispose = () => {};
     let gone = false;
+    const animationDelay = window.setTimeout(() => {
     Promise.all([import('lenis'), import('gsap'), import('gsap/ScrollTrigger')]).then(
       ([l, g, s]) => {
         if (gone) return;
@@ -325,8 +356,10 @@ function Dashboard({ initial }: { initial: Initial }) {
         };
       },
     );
+    }, 1800);
     return () => {
       gone = true;
+      window.clearTimeout(animationDelay);
       dispose();
     };
   }, [reduced]);
@@ -604,13 +637,15 @@ function Dashboard({ initial }: { initial: Initial }) {
                 <Globe2 size={16} /> GEOGRAFIA DO MERCADO{' '}
                 <span>{f.estado ? 'ESCALA ESTADUAL' : 'ESCALA GLOBAL'}</span>
               </div>
-              <AtlasMap
+              <LazySection minHeight={430} label="Preparando o mapa interativo...">
+                <AtlasMap
                 filters={f}
                 mode={!showDetailed && selectedGlobal ? 'global' : 'detalhado'}
                 globalTotals={mapGlobalTotals}
                 onCountry={selectCountry}
                 onState={(v) => update({ estado: v })}
               />
+              </LazySection>
             </div>
             <aside className="market-summary">
               <span className="eyebrow">MERCADO EM FOCO</span>
@@ -740,7 +775,7 @@ function Dashboard({ initial }: { initial: Initial }) {
             }}
           >
             {rank.map((r) => {
-              const image = photos.data?.items.find((m) => m.modelo_id === r.modelo_id);
+              const image = photoByModel.get(r.modelo_id);
               return (
                 <article key={r.modelo_id}>
                   <div className="model-visual">
@@ -817,7 +852,7 @@ function Dashboard({ initial }: { initial: Initial }) {
             </div>
             <div className="chart-panel">
               <div className="panel-label">DISTRIBUIÇÃO DOS LÍDERES</div>
-              <Chart kind="ranking" items={rank} />
+              <LazySection minHeight={300} label="Preparando gráfico de líderes..."><Chart kind="ranking" items={rank} /></LazySection>
             </div>
           </div>
         </section>}
@@ -862,7 +897,7 @@ function Dashboard({ initial }: { initial: Initial }) {
               <div className="panel-label">
                 REGISTROS POR ANO <span>ANUAL</span>
               </div>
-              <Chart kind="timeline" items={p?.serie.items || []} />
+              <LazySection minHeight={300} label="Preparando série temporal..."><Chart kind="timeline" items={p?.serie.items || []} /></LazySection>
             </article>
           </div>
           {chartData.data && (
@@ -880,7 +915,7 @@ function Dashboard({ initial }: { initial: Initial }) {
                 Tamanho proporcional ao volume. Selecione um modelo para consultar seu resultado.
               </p>
             </div>
-            <WordCloud items={p?.nuvem || []} />
+            <LazySection minHeight={290} label="Preparando nuvem de palavras..."><WordCloud items={p?.nuvem || []} /></LazySection>
           </div>
           <div className="stat-strip">
             <div>

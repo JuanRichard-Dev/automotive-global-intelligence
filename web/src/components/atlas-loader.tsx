@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useState } from 'react';
+import type { ComponentProps } from 'react';
+import type AtlasComponent from '@/components/atlas';
 
 const Atlas = dynamic(() => import('@/components/atlas'), {
   ssr: false,
@@ -14,7 +16,7 @@ const Atlas = dynamic(() => import('@/components/atlas'), {
   ),
 });
 
-type Bootstrap = Parameters<typeof Atlas>[0]['initial'];
+type Bootstrap = ComponentProps<typeof AtlasComponent>['initial'];
 
 export default function AtlasLoader() {
   const [data, setData] = useState<Bootstrap | null>(null);

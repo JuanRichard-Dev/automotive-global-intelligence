@@ -12,12 +12,48 @@ from .analytics import ranking,resolve,where,series,statistics
 
 ROOT=Path(__file__).resolve().parents[1]
 def require_ready():
-    # Uma reconstrução da carga não deve expor fatos parcialmente carregados.
-    return health()
+    # The ETL readiness check is shared by concurrent read requests.
+    # Freshness is bounded to 15 seconds; no more DB round trip on every endpoint.
+    def check():
+        try:
+            item = query("SELECT status,qualidade FROM execucao_etl ORDER BY iniciada_em DESC LIMIT 1", one=True)
+            if not item or item['status'] != 'concluida' or (item.get('qualidade') or {}).get('modo') != 'real':
+                raise HTTPException(503, 'Banco/ETL indisponível')
+            return dict(status='ok', database='postgresql', etl=item['status'])
+        except HTTPException:
+            raise
+        except Exception:
+            # Avoid leaking database hostnames or pooler connection details.
+            raise HTTPException(503, 'Banco/ETL indisponível') from None
+    return cached(('readiness',), check, ttl=15)
 
 app=FastAPI(title='Motor Atlas — API de inteligência automotiva',version='1.0.0',description='PostgreSQL como fonte única. Evidências reais com medidas e períodos explícitos.',dependencies=[Depends(require_ready)])
 app.add_middleware(CORSMiddleware,allow_origins=os.getenv('CORS_ORIGINS','http://localhost:3000,http://127.0.0.1:3100').split(','),allow_credentials=False,allow_methods=['GET'],allow_headers=['Content-Type'])
 app.mount('/media',StaticFiles(directory=ROOT/'data/media'),name='media')
+
+# Public read-only datasets can be cached by the CDN. Freshness is bounded,
+# while an unavailable database can serve the last valid cached response.
+_PUBLIC_CACHE_TTL = {
+    '/bootstrap': 180,
+    '/painel': 90,
+    '/mapa': 300,
+    '/paises': 300,
+    '/midia': 600,
+    '/comparador': 90,
+    '/graficos': 90,
+    '/mercados-globais': 300,
+    '/fenabrave/mensal': 300,
+}
+
+@app.middleware('http')
+async def cache_public_gets(request, call_next):
+    response = await call_next(request)
+    if request.method == 'GET' and response.status_code == 200:
+        ttl = _PUBLIC_CACHE_TTL.get(request.url.path)
+        if ttl:
+            response.headers['Cache-Control'] = f'public, max-age=30, s-maxage={ttl}, stale-while-revalidate=300'
+    return response
+
 F=Annotated[Filters,Depends()]
 P=Annotated[Page,Depends()]
 
@@ -27,11 +63,7 @@ async def invalid_filters(request,exc):
 
 @app.get('/health')
 def health():
-    try:
-        q=query("SELECT status,qualidade FROM execucao_etl ORDER BY iniciada_em DESC LIMIT 1",one=True)
-        if not q or q['status']!='concluida' or (q.get('qualidade') or {}).get('modo')!='real':raise RuntimeError('ETL mais recente ainda não concluído')
-        return dict(status='ok',database='postgresql',etl=q['status'])
-    except Exception as e:raise HTTPException(503,'Banco/ETL indisponível: '+str(e))
+    return require_ready()
 
 @app.get('/mercados-globais')
 def global_markets():
